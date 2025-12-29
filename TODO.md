@@ -54,6 +54,8 @@
 - **Ephemeral Data**: Messages and rooms auto-delete when timer expires ✅
 - **Design**: Cyberpunk-minimalist with dark mode, neon purple accents, glass-morphic cards ✅
 - **Mobile-First**: Optimized for mobile with one-handed UI ✅
+- **Landing Page**: Comprehensive landing page with features, how it works, pricing sections ✅
+- **Dark Mode Toggle**: Included dark/light mode toggle in header ✅
 - **Advanced Features**: Voice morphing, AI moderation, spectator mode - noted for future enhancement
 - **Currency**: Using INR (₹) for pricing as specified in requirements ✅
 - **IMPORTANT**: User must configure STRIPE_SECRET_KEY environment variable for payment functionality

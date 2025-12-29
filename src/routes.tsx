@@ -1,4 +1,12 @@
-import SamplePage from './pages/SamplePage';
+import LandingPage from './pages/LandingPage';
+import LoginPage from './pages/LoginPage';
+import JoinRoomPage from './pages/JoinRoomPage';
+import ChatRoomPage from './pages/ChatRoomPage';
+import ExtendTimePage from './pages/ExtendTimePage';
+import PaymentSuccessPage from './pages/PaymentSuccessPage';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import CreateRoomPage from './pages/admin/CreateRoomPage';
+import NotFound from './pages/NotFound';
 import type { ReactNode } from 'react';
 
 interface RouteConfig {
@@ -10,9 +18,49 @@ interface RouteConfig {
 
 const routes: RouteConfig[] = [
   {
-    name: 'Sample Page',
+    name: 'Landing',
     path: '/',
-    element: <SamplePage />
+    element: <LandingPage />
+  },
+  {
+    name: 'Login',
+    path: '/login',
+    element: <LoginPage />
+  },
+  {
+    name: 'Join Room',
+    path: '/join/:code',
+    element: <JoinRoomPage />
+  },
+  {
+    name: 'Chat Room',
+    path: '/room/:roomId',
+    element: <ChatRoomPage />
+  },
+  {
+    name: 'Extend Time',
+    path: '/extend/:roomId',
+    element: <ExtendTimePage />
+  },
+  {
+    name: 'Payment Success',
+    path: '/payment-success',
+    element: <PaymentSuccessPage />
+  },
+  {
+    name: 'Admin Dashboard',
+    path: '/admin',
+    element: <AdminDashboard />
+  },
+  {
+    name: 'Create Room',
+    path: '/admin/create-room',
+    element: <CreateRoomPage />
+  },
+  {
+    name: 'Not Found',
+    path: '*',
+    element: <NotFound />
   }
 ];
 

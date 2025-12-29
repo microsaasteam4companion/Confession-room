@@ -1,0 +1,59 @@
+# Task: Build Anonymous Confession Room Web Application (Secret Room)
+
+## Plan
+- [x] Step 1: Initialize Supabase and setup authentication (admin only)
+  - [x] Initialize Supabase project
+  - [x] Setup admin authentication system
+  - [x] Configure AuthContext and RouteGuard
+- [x] Step 2: Design cyberpunk-minimalist theme and color system
+  - [x] Update index.css with dark theme (Deep Black #0A0A0A, Neon Purple #BC13FE)
+  - [x] Configure timer color states (green, yellow, red)
+  - [x] Add glass-morphic card styles
+- [x] Step 3: Create database schema
+  - [x] Create rooms table with expiry tracking
+  - [x] Create messages table (ephemeral)
+  - [x] Create room_participants table
+  - [x] Create orders table for payments
+  - [x] Setup RLS policies
+- [x] Step 4: Build core pages and routing
+  - [x] Landing page (admin room creation)
+  - [x] Admin login page
+  - [x] Room join page (QR/link entry)
+  - [x] Chat room page
+  - [x] Admin dashboard
+  - [x] Payment success page
+- [x] Step 5: Implement room creation and QR code generation
+  - [x] Room creation form with settings
+  - [x] QR code generation component
+  - [x] Unique room link generation
+- [x] Step 6: Implement anonymous chat with real-time messaging
+  - [x] Random avatar assignment
+  - [x] Real-time message display using Supabase Realtime
+  - [x] Message input and send functionality
+- [x] Step 7: Implement countdown timer system
+  - [x] Live countdown display
+  - [x] Visual progress bar with color transitions
+  - [x] 1-minute warning notification
+  - [x] Timer expiry handling
+- [x] Step 8: Implement payment system for time extensions
+  - [x] Create Stripe checkout edge function
+  - [x] Create payment verification edge function
+  - [x] Time extension options UI (5min/₹10, 15min/₹29, 1hr/₹99)
+  - [x] Payment success flow
+- [x] Step 9: Implement admin dashboard features
+  - [x] View active rooms
+  - [x] Kick/ban users functionality
+  - [x] Extend time manually
+  - [x] Room settings management
+- [x] Step 10: Run lint and final testing
+
+## Notes
+- **Authentication**: Admin only (for room creation/management), users join anonymously ✅
+- **Payment**: Required for time extensions using Stripe ✅
+- **Real-time**: Using Supabase Realtime for chat messages ✅
+- **Ephemeral Data**: Messages and rooms auto-delete when timer expires ✅
+- **Design**: Cyberpunk-minimalist with dark mode, neon purple accents, glass-morphic cards ✅
+- **Mobile-First**: Optimized for mobile with one-handed UI ✅
+- **Advanced Features**: Voice morphing, AI moderation, spectator mode - noted for future enhancement
+- **Currency**: Using INR (₹) for pricing as specified in requirements ✅
+- **IMPORTANT**: User must configure STRIPE_SECRET_KEY environment variable for payment functionality

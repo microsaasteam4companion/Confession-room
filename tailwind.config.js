@@ -84,6 +84,11 @@ export default {
                     '3': 'hsl(var(--chart-3))',
                     '4': 'hsl(var(--chart-4))',
                     '5': 'hsl(var(--chart-5))'
+                },
+                timer: {
+                    safe: 'hsl(var(--timer-safe))',
+                    warning: 'hsl(var(--timer-warning))',
+                    danger: 'hsl(var(--timer-danger))'
                 }
             },
             borderRadius: {

@@ -31,7 +31,7 @@ export default function LandingPage() {
   const { profile, signOut } = useAuth();
   const navigate = useNavigate();
 
-  // डार्क मोड को कंपोनेंट माउंट पर इनिशियलाइज़ करें
+  // Initialize dark mode on component mount
   useEffect(() => {
     const isDark = localStorage.getItem('darkMode') !== 'false';
     setDarkMode(isDark);
@@ -246,11 +246,11 @@ export default function LandingPage() {
               🎭 Ephemeral Anonymous Chat Platform
             </Badge>
             <h2 className="text-4xl xl:text-7xl font-bold gradient-text neon-glow leading-tight">
-              राज साझा करें।<br />कोई निशान न छोड़ें।
+              Share Secrets.<br />Leave No Trace.
             </h2>
             <p className="text-lg xl:text-2xl text-muted-foreground max-w-3xl mx-auto">
-              समय-सीमित गुमनाम चैट रूम जहां बातचीत शून्य में गायब हो जाती है। 
-              कोई साइन अप नहीं। कोई इतिहास नहीं। पूर्ण गोपनीयता।
+              Time-limited anonymous chat rooms where conversations vanish into the void.
+              No signup. No history. Complete privacy.
             </p>
             <div className="flex flex-col xl:flex-row gap-4 justify-center items-center pt-4">
               <Button size="lg" className="text-lg px-8 py-6" onClick={() => document.getElementById('join')?.scrollIntoView({ behavior: 'smooth' })}>
@@ -290,7 +290,7 @@ export default function LandingPage() {
               Built for Privacy & Anonymity
             </h3>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              हर फीचर एक लक्ष्य के साथ डिज़ाइन किया गया: आपकी पहचान की रक्षा करें और शून्य डिजिटल फुटप्रिंट सुनिश्चित करें।
+              Every feature designed with one goal: protect your identity and ensure zero digital footprint.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 max-w-6xl mx-auto">
@@ -317,10 +317,10 @@ export default function LandingPage() {
           <div className="text-center space-y-4 mb-16">
             <Badge variant="outline" className="text-sm px-4 py-1">How It Works</Badge>
             <h3 className="text-3xl xl:text-5xl font-bold gradient-text">
-              सरल। तेज़। गुमनाम।
+              Simple. Fast. Anonymous.
             </h3>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              पूर्ण गुमनामी के लिए चार Step। कोई जटिल सेटअप नहीं। बस शुद्ध, निजी बातचीत।
+              Four steps to complete anonymity. No complicated setup. Just pure, private conversations.
             </p>
           </div>
           <div className="grid grid-cols-1 xl:grid-cols-4 gap-8 max-w-6xl mx-auto">
@@ -360,7 +360,7 @@ export default function LandingPage() {
               Pay Only When You Need More Time
             </h3>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              10 मिनट के साथ मुफ्त शुरू करें। लचीले Pricing विकल्पों के साथ कभी भी बढ़ाएं।
+              Start free with 10 minutes. Extend anytime with flexible pricing options.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 max-w-6xl mx-auto">
@@ -482,7 +482,7 @@ export default function LandingPage() {
                 <h4 className="font-bold text-lg gradient-text">Secret Room</h4>
               </div>
               <p className="text-sm text-muted-foreground">
-                एफेमेरल एनोनिमस चैट प्लेटफॉर्म। राज साझा करें, कोई निशान न छोड़ें।
+                Ephemeral anonymous chat platform. Share secrets, leave no trace.
               </p>
             </div>
             <div>

@@ -70,113 +70,113 @@ export default function LandingPage() {
   const features = [
     {
       icon: Shield,
-      title: 'पूर्ण गुमनामी',
-      description: 'साइन अप की आवश्यकता नहीं। रैंडम अवतार के साथ तुरंत जुड़ें। आपकी पहचान छिपी रहती है।'
+      title: 'Complete Anonymity',
+      description: 'No signup required. Join instantly with a random avatar. Your identity stays hidden.'
     },
     {
       icon: Clock,
-      title: 'समय-सीमित सत्र',
-      description: 'रूम स्वचालित रूप से समाप्त हो जाते हैं। टाइमर शून्य होने पर सभी संदेश स्वयं नष्ट हो जाते हैं।'
+      title: 'Time-Limited Sessions',
+      description: 'Rooms expire automatically. All messages self-destruct when the timer reaches zero.'
     },
     {
       icon: Trash2,
-      title: 'शून्य डिजिटल फुटप्रिंट',
-      description: 'कोई चैट इतिहास नहीं। कोई डेटा रिटेंशन नहीं। डिज़ाइन द्वारा पूर्ण गोपनीयता की गारंटी।'
+      title: 'Zero Digital Footprint',
+      description: 'No chat history. No data retention. Complete privacy guaranteed by design.'
     },
     {
       icon: Zap,
-      title: 'रियल-टाइम मैसेजिंग',
-      description: 'WebSocket तकनीक के साथ तत्काल संदेश वितरण। चैट स्वाभाविक रूप से प्रवाहित होती है।'
+      title: 'Real-Time Messaging',
+      description: 'Instant message delivery with WebSocket technology. Chat flows naturally.'
     },
     {
       icon: QrCode,
-      title: 'आसान पहुंच',
-      description: 'QR कोड या सरल रूम कोड साझा करें। सेकंड में किसी भी डिवाइस से जुड़ें।'
+      title: 'Easy Access',
+      description: 'Share QR codes or simple room codes. Join from any device in seconds.'
     },
     {
       icon: Lock,
-      title: 'सुरक्षित और निजी',
-      description: 'एंड-टू-एंड एन्क्रिप्शन। रो-लेवल सुरक्षा। आपकी बातचीत निजी रहती है।'
+      title: 'Secure & Private',
+      description: 'End-to-end encryption. Row-level security. Your conversations stay private.'
     }
   ];
 
   const howItWorks = [
     {
       step: '1',
-      title: 'बनाएं या जुड़ें',
-      description: 'एडमिन कस्टम सेटिंग्स के साथ रूम बनाता है। यूजर्स सरल कोड या QR स्कैन से जुड़ते हैं।',
+      title: 'Create or Join',
+      description: 'Admin creates a room with custom settings. Users join with a simple code or QR scan.',
       icon: Users
     },
     {
       step: '2',
-      title: 'गुमनाम अवतार प्राप्त करें',
-      description: 'स्वचालित रूप से "Ghost-42" या "Ninja-15" जैसा रैंडम अवतार असाइन किया जाता है। कोई व्यक्तिगत जानकारी की आवश्यकता नहीं।',
+      title: 'Get Anonymous Avatar',
+      description: 'Automatically assigned a random avatar like "Ghost-42" or "Ninja-15". No personal info needed.',
       icon: UserCircle
     },
     {
       step: '3',
-      title: 'स्वतंत्र रूप से चैट करें',
-      description: 'गुमनाम रूप से विचार साझा करें। पूर्ण गोपनीयता सुरक्षा के साथ रियल-टाइम मैसेजिंग।',
+      title: 'Chat Freely',
+      description: 'Share thoughts anonymously. Real-time messaging with complete privacy protection.',
       icon: MessageSquare
     },
     {
       step: '4',
-      title: 'टाइमर समाप्त',
-      description: 'जब समय समाप्त हो जाता है, तो सभी संदेश और रूम डेटा स्थायी रूप से हटा दिए जाते हैं। शून्य निशान।',
+      title: 'Timer Expires',
+      description: 'When time runs out, all messages and room data are permanently deleted. Zero trace.',
       icon: Timer
     }
   ];
 
   const pricingPlans = [
     {
-      name: 'फ्री टियर',
+      name: 'Free Tier',
       price: '₹0',
-      duration: '10 मिनट',
+      duration: '10 minutes',
       features: [
-        'गुमनाम चैट एक्सेस',
-        'रैंडम अवतार असाइनमेंट',
-        'रियल-टाइम मैसेजिंग',
-        'समाप्ति पर ऑटो-डिलीट',
-        'QR कोड एक्सेस'
+        'Anonymous chat access',
+        'Random avatar assignment',
+        'Real-time messaging',
+        'Auto-delete on expiry',
+        'QR code access'
       ],
       popular: false
     },
     {
-      name: 'क्विक एक्सटेंड',
+      name: 'Quick Extend',
       price: '₹10',
-      duration: '+5 मिनट',
+      duration: '+5 minutes',
       features: [
-        'सभी फ्री फीचर्स',
-        'सक्रिय सत्र बढ़ाएं',
-        'बातचीत जारी रखें',
-        'तत्काल सक्रियण',
-        'सुरक्षित भुगतान'
+        'All free features',
+        'Extend active session',
+        'Continue conversations',
+        'Instant activation',
+        'Secure payment'
       ],
       popular: false
     },
     {
-      name: 'स्टैंडर्ड',
+      name: 'Standard',
       price: '₹29',
-      duration: '+15 मिनट',
+      duration: '+15 minutes',
       features: [
-        'सभी फ्री फीचर्स',
-        'विस्तारित चैट समय',
-        'बेहतर वैल्यू',
-        'मल्टिपल एक्सटेंशन',
-        'प्राथमिकता सपोर्ट'
+        'All free features',
+        'Extended chat time',
+        'Better value',
+        'Multiple extensions',
+        'Priority support'
       ],
       popular: true
     },
     {
-      name: 'प्रीमियम',
+      name: 'Premium',
       price: '₹99',
-      duration: '+1 घंटा',
+      duration: '+1 hour',
       features: [
-        'सभी फ्री फीचर्स',
-        'अधिकतम चैट समय',
-        'प्रति मिनट सर्वोत्तम मूल्य',
-        'गहरी बातचीत',
-        'VIP अनुभव'
+        'All free features',
+        'Maximum chat time',
+        'Best value per minute',
+        'Deep conversations',
+        'VIP experience'
       ],
       popular: false
     }
@@ -195,10 +195,10 @@ export default function LandingPage() {
               <h1 className="text-2xl font-bold gradient-text">Secret Room</h1>
             </div>
             <nav className="hidden xl:flex items-center gap-6">
-              <a href="#features" className="text-sm hover:text-primary transition-colors">फीचर्स</a>
-              <a href="#how-it-works" className="text-sm hover:text-primary transition-colors">कैसे काम करता है</a>
-              <a href="#pricing" className="text-sm hover:text-primary transition-colors">प्राइसिंग</a>
-              <a href="#join" className="text-sm hover:text-primary transition-colors">अभी जुड़ें</a>
+              <a href="#features" className="text-sm hover:text-primary transition-colors">Features</a>
+              <a href="#how-it-works" className="text-sm hover:text-primary transition-colors">How It Works</a>
+              <a href="#pricing" className="text-sm hover:text-primary transition-colors">Pricing</a>
+              <a href="#join" className="text-sm hover:text-primary transition-colors">Join Now</a>
             </nav>
             <div className="flex items-center gap-3">
               <Button
@@ -206,7 +206,7 @@ export default function LandingPage() {
                 size="sm"
                 onClick={toggleDarkMode}
                 className="w-9 h-9 p-0"
-                title={darkMode ? 'लाइट मोड' : 'डार्क मोड'}
+                title={darkMode ? 'Light Mode' : 'Dark Mode'}
               >
                 {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
               </Button>
@@ -218,18 +218,18 @@ export default function LandingPage() {
                   </span>
                   {profile.role === 'admin' && (
                     <Button variant="outline" size="sm" onClick={handleAdminDashboard}>
-                      डैशबोर्ड
+                      Dashboard
                     </Button>
                   )}
                   <Button variant="ghost" size="sm" onClick={signOut}>
                     <LogOut className="w-4 h-4 xl:mr-2" />
-                    <span className="hidden xl:inline">लॉगआउट</span>
+                    <span className="hidden xl:inline">Logout</span>
                   </Button>
                 </>
               ) : (
                 <Button variant="outline" size="sm" onClick={() => navigate('/login')}>
                   <LogIn className="w-4 h-4 xl:mr-2" />
-                  <span className="hidden xl:inline">एडमिन लॉगिन</span>
+                  <span className="hidden xl:inline">Admin Login</span>
                 </Button>
               )}
             </div>
@@ -243,7 +243,7 @@ export default function LandingPage() {
         <div className="container mx-auto px-4 relative">
           <div className="max-w-4xl mx-auto text-center space-y-8">
             <Badge variant="outline" className="text-sm px-4 py-1">
-              🎭 एफेमेरल एनोनिमस चैट प्लेटफॉर्म
+              🎭 Ephemeral Anonymous Chat Platform
             </Badge>
             <h2 className="text-4xl xl:text-7xl font-bold gradient-text neon-glow leading-tight">
               राज साझा करें।<br />कोई निशान न छोड़ें।
@@ -255,26 +255,26 @@ export default function LandingPage() {
             <div className="flex flex-col xl:flex-row gap-4 justify-center items-center pt-4">
               <Button size="lg" className="text-lg px-8 py-6" onClick={() => document.getElementById('join')?.scrollIntoView({ behavior: 'smooth' })}>
                 <Sparkles className="w-5 h-5 mr-2" />
-                अभी रूम में जुड़ें
+                Join a Room Now
               </Button>
               {profile?.role === 'admin' && (
                 <Button size="lg" variant="outline" className="text-lg px-8 py-6" onClick={handleCreateRoom}>
-                  रूम बनाएं
+                  Create Room
                 </Button>
               )}
             </div>
             <div className="flex flex-wrap justify-center gap-8 pt-8 text-sm text-muted-foreground">
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-4 h-4 text-primary" />
-                <span>साइन अप की आवश्यकता नहीं</span>
+                <span>No Signup Required</span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-4 h-4 text-primary" />
-                <span>100% गुमनाम</span>
+                <span>100% Anonymous</span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-4 h-4 text-primary" />
-                <span>ऑटो-डिलीट संदेश</span>
+                <span>Auto-Delete Messages</span>
               </div>
             </div>
           </div>
@@ -285,9 +285,9 @@ export default function LandingPage() {
       <section id="features" className="py-20 xl:py-32 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="text-center space-y-4 mb-16">
-            <Badge variant="outline" className="text-sm px-4 py-1">फीचर्स</Badge>
+            <Badge variant="outline" className="text-sm px-4 py-1">Features</Badge>
             <h3 className="text-3xl xl:text-5xl font-bold gradient-text">
-              गोपनीयता और गुमनामी के लिए बनाया गया
+              Built for Privacy & Anonymity
             </h3>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               हर फीचर एक लक्ष्य के साथ डिज़ाइन किया गया: आपकी पहचान की रक्षा करें और शून्य डिजिटल फुटप्रिंट सुनिश्चित करें।
@@ -315,12 +315,12 @@ export default function LandingPage() {
       <section id="how-it-works" className="py-20 xl:py-32">
         <div className="container mx-auto px-4">
           <div className="text-center space-y-4 mb-16">
-            <Badge variant="outline" className="text-sm px-4 py-1">कैसे काम करता है</Badge>
+            <Badge variant="outline" className="text-sm px-4 py-1">How It Works</Badge>
             <h3 className="text-3xl xl:text-5xl font-bold gradient-text">
               सरल। तेज़। गुमनाम।
             </h3>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              पूर्ण गुमनामी के लिए चार चरण। कोई जटिल सेटअप नहीं। बस शुद्ध, निजी बातचीत।
+              पूर्ण गुमनामी के लिए चार Step। कोई जटिल सेटअप नहीं। बस शुद्ध, निजी बातचीत।
             </p>
           </div>
           <div className="grid grid-cols-1 xl:grid-cols-4 gap-8 max-w-6xl mx-auto">
@@ -332,7 +332,7 @@ export default function LandingPage() {
                       <item.icon className="w-8 h-8 text-primary" />
                     </div>
                     <div className="text-center">
-                      <Badge className="mb-2">चरण {item.step}</Badge>
+                      <Badge className="mb-2">Step {item.step}</Badge>
                       <CardTitle className="text-xl">{item.title}</CardTitle>
                     </div>
                   </CardHeader>
@@ -355,12 +355,12 @@ export default function LandingPage() {
       <section id="pricing" className="py-20 xl:py-32 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="text-center space-y-4 mb-16">
-            <Badge variant="outline" className="text-sm px-4 py-1">प्राइसिंग</Badge>
+            <Badge variant="outline" className="text-sm px-4 py-1">Pricing</Badge>
             <h3 className="text-3xl xl:text-5xl font-bold gradient-text">
-              केवल तभी भुगतान करें जब आपको अधिक समय चाहिए
+              Pay Only When You Need More Time
             </h3>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              10 मिनट के साथ मुफ्त शुरू करें। लचीले प्राइसिंग विकल्पों के साथ कभी भी बढ़ाएं।
+              10 मिनट के साथ मुफ्त शुरू करें। लचीले Pricing विकल्पों के साथ कभी भी बढ़ाएं।
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 max-w-6xl mx-auto">
@@ -371,7 +371,7 @@ export default function LandingPage() {
               >
                 {plan.popular && (
                   <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                    <Badge className="bg-primary text-primary-foreground">सबसे लोकप्रिय</Badge>
+                    <Badge className="bg-primary text-primary-foreground">Most Popular</Badge>
                   </div>
                 )}
                 <CardHeader className="text-center">
@@ -396,7 +396,7 @@ export default function LandingPage() {
           </div>
           <div className="text-center mt-12">
             <p className="text-sm text-muted-foreground">
-              💳 Stripe द्वारा संचालित सुरक्षित भुगतान • सभी लेनदेन एन्क्रिप्टेड
+              💳 Secure payments powered by Stripe • All transactions encrypted
             </p>
           </div>
         </div>
@@ -411,15 +411,15 @@ export default function LandingPage() {
                 <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4 mx-auto">
                   <Sparkles className="w-8 h-8 text-primary" />
                 </div>
-                <CardTitle className="text-3xl gradient-text">रूम में जुड़ें</CardTitle>
+                <CardTitle className="text-3xl gradient-text">Join a Room</CardTitle>
                 <CardDescription className="text-base">
-                  गुमनाम चैट सत्र में शामिल होने के लिए 6-अक्षर का रूम कोड दर्ज करें
+                  Enter a 6-character room code to join an anonymous chat session
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="flex flex-col xl:flex-row gap-3">
                   <Input
-                    placeholder="रूम कोड दर्ज करें (जैसे, ABC123)"
+                    placeholder="Enter room code (e.g., ABC123)"
                     value={roomCode}
                     onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
                     onKeyDown={(e) => e.key === 'Enter' && handleJoinRoom()}
@@ -432,19 +432,19 @@ export default function LandingPage() {
                     disabled={!roomCode.trim()}
                     className="h-14 px-8"
                   >
-                    रूम में जुड़ें
+                    Join a Room
                   </Button>
                 </div>
                 <Separator />
                 <div className="text-center space-y-2">
-                  <p className="text-sm text-muted-foreground">कोड नहीं है?</p>
+                  <p className="text-sm text-muted-foreground">Don't have a code?</p>
                   {profile?.role === 'admin' ? (
                     <Button variant="outline" onClick={handleCreateRoom} className="w-full">
-                      अपना खुद का रूम बनाएं
+                      अपना खुद का Create Room
                     </Button>
                   ) : (
                     <p className="text-xs text-muted-foreground">
-                      एडमिन से रूम बनाने और आपके साथ कोड साझा करने के लिए कहें
+                      Ask an admin to create a room and share the code with you
                     </p>
                   )}
                 </div>
@@ -459,14 +459,14 @@ export default function LandingPage() {
         <div className="container mx-auto px-4 text-center">
           <div className="max-w-3xl mx-auto space-y-6">
             <h3 className="text-3xl xl:text-5xl font-bold gradient-text">
-              गुमनाम रूप से साझा करने के लिए तैयार हैं?
+              Ready to Share Anonymously?
             </h3>
             <p className="text-lg text-muted-foreground">
               हजारों यूजर्स में शामिल हों जो निजी, एफेमेरल बातचीत के लिए Secret Room पर भरोसा करते हैं।
             </p>
             <Button size="lg" className="text-lg px-8 py-6" onClick={() => document.getElementById('join')?.scrollIntoView({ behavior: 'smooth' })}>
               <Sparkles className="w-5 h-5 mr-2" />
-              मुफ्त में शुरू करें
+              Get Started Free
             </Button>
           </div>
         </div>
@@ -486,27 +486,27 @@ export default function LandingPage() {
               </p>
             </div>
             <div>
-              <h5 className="font-semibold mb-4">प्रोडक्ट</h5>
+              <h5 className="font-semibold mb-4">Product</h5>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#features" className="hover:text-primary transition-colors">फीचर्स</a></li>
-                <li><a href="#how-it-works" className="hover:text-primary transition-colors">कैसे काम करता है</a></li>
-                <li><a href="#pricing" className="hover:text-primary transition-colors">प्राइसिंग</a></li>
+                <li><a href="#features" className="hover:text-primary transition-colors">Features</a></li>
+                <li><a href="#how-it-works" className="hover:text-primary transition-colors">How It Works</a></li>
+                <li><a href="#pricing" className="hover:text-primary transition-colors">Pricing</a></li>
               </ul>
             </div>
             <div>
-              <h5 className="font-semibold mb-4">सुरक्षा</h5>
+              <h5 className="font-semibold mb-4">Security</h5>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>एंड-टू-एंड एन्क्रिप्शन</li>
-                <li>शून्य डेटा रिटेंशन</li>
-                <li>डिज़ाइन द्वारा गुमनाम</li>
+                <li>End-to-End Encryption</li>
+                <li>Zero Data Retention</li>
+                <li>Anonymous by Design</li>
               </ul>
             </div>
             <div>
-              <h5 className="font-semibold mb-4">कानूनी</h5>
+              <h5 className="font-semibold mb-4">Legal</h5>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>गोपनीयता नीति</li>
-                <li>सेवा की शर्तें</li>
-                <li>समुदाय दिशानिर्देश</li>
+                <li>Privacy Policy</li>
+                <li>Terms of Service</li>
+                <li>Community Guidelines</li>
               </ul>
             </div>
           </div>
@@ -514,9 +514,9 @@ export default function LandingPage() {
           <div className="flex flex-col xl:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
             <p>© 2025 Secret Room. सभी बातचीत एफेमेरल हैं।</p>
             <div className="flex items-center gap-4">
-              <span>गोपनीयता को ध्यान में रखकर बनाया गया</span>
+              <span>Built with privacy in mind</span>
               <span>•</span>
-              <span>Supabase और Stripe द्वारा संचालित</span>
+              <span>Powered by Supabase & Stripe</span>
             </div>
           </div>
         </div>

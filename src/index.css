@@ -109,11 +109,6 @@ Cyberpunk-Minimalist Theme with Dark Mode Default
   body {
     @apply bg-background text-foreground;
   }
-  
-  /* Force dark mode by default */
-  html {
-    @apply dark;
-  }
 }
 
 @layer utilities {

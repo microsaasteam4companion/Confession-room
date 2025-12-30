@@ -11,7 +11,7 @@ export const roomApi = {
   }) {
     const code = await this.generateUniqueCode();
     const expiresAt = new Date(Date.now() + data.initial_duration * 1000).toISOString();
-    
+
     const { data: room, error } = await supabase
       .from('rooms')
       .insert({
@@ -24,28 +24,55 @@ export const roomApi = {
       })
       .select()
       .maybeSingle();
-    
+
     if (error) throw error;
     return room as Room;
+    if (error) throw error;
+    return room as Room;
+  },
+
+  // Initiate Stripe Payment Session
+  async createPaymentSession(data: {
+    name: string;
+    price: number;
+    quantity: number;
+    type: 'create_room' | 'extend_time';
+    metadata?: any;
+  }) {
+    // Note: Assuming create_stripe_checkout handles this struct
+    const { data: session, error } = await supabase.functions.invoke('create_stripe_checkout', {
+      body: JSON.stringify({
+        items: [{
+          name: data.name,
+          price: data.price,
+          quantity: data.quantity
+        }],
+        payment_type: data.type,
+        metadata: data.metadata,
+        currency: 'inr'
+      })
+    });
+
+    return { data: session, error };
   },
 
   // Generate unique room code
   async generateUniqueCode(): Promise<string> {
     const { data, error } = await supabase.rpc('generate_room_code');
     if (error) throw error;
-    
+
     // Check if code already exists
     const { data: existing } = await supabase
       .from('rooms')
       .select('code')
       .eq('code', data)
       .maybeSingle();
-    
+
     if (existing) {
       // Recursively generate new code if collision
       return this.generateUniqueCode();
     }
-    
+
     return data;
   },
 
@@ -57,7 +84,7 @@ export const roomApi = {
       .eq('code', code.toUpperCase())
       .eq('status', 'active')
       .maybeSingle();
-    
+
     if (error) throw error;
     return data as Room | null;
   },
@@ -69,7 +96,7 @@ export const roomApi = {
       .select('*')
       .eq('id', id)
       .maybeSingle();
-    
+
     if (error) throw error;
     return data as Room | null;
   },
@@ -81,7 +108,7 @@ export const roomApi = {
       .select('*')
       .eq('creator_id', userId)
       .order('created_at', { ascending: false });
-    
+
     if (error) throw error;
     return (Array.isArray(data) ? data : []) as Room[];
   },
@@ -94,7 +121,7 @@ export const roomApi = {
       .eq('id', id)
       .select()
       .maybeSingle();
-    
+
     if (error) throw error;
     return data as Room;
   },
@@ -105,7 +132,7 @@ export const roomApi = {
       p_room_id: roomId,
       p_minutes: minutes
     });
-    
+
     if (error) throw error;
   },
 
@@ -115,7 +142,7 @@ export const roomApi = {
       .from('rooms')
       .update({ status: 'deleted' })
       .eq('id', id);
-    
+
     if (error) throw error;
   },
 
@@ -125,7 +152,7 @@ export const roomApi = {
       .from('rooms')
       .update({ status: 'expired' })
       .eq('id', id);
-    
+
     if (error) throw error;
   }
 };
@@ -142,7 +169,7 @@ export const participantApi = {
       })
       .select()
       .maybeSingle();
-    
+
     if (error) throw error;
     return data as RoomParticipant;
   },
@@ -155,7 +182,7 @@ export const participantApi = {
       .eq('room_id', roomId)
       .eq('is_banned', false)
       .order('joined_at', { ascending: true });
-    
+
     if (error) throw error;
     return (Array.isArray(data) ? data : []) as RoomParticipant[];
   },
@@ -166,7 +193,7 @@ export const participantApi = {
       .from('room_participants')
       .update({ is_banned: true })
       .eq('id', participantId);
-    
+
     if (error) throw error;
   },
 
@@ -192,7 +219,7 @@ export const messageApi = {
       })
       .select()
       .maybeSingle();
-    
+
     if (error) throw error;
     return data as Message;
   },
@@ -208,7 +235,7 @@ export const messageApi = {
       .eq('room_id', roomId)
       .order('created_at', { ascending: true })
       .limit(limit);
-    
+
     if (error) throw error;
     return (Array.isArray(data) ? data : []) as Message[];
   },
@@ -232,7 +259,7 @@ export const messageApi = {
             .select('*')
             .eq('id', payload.new.participant_id)
             .maybeSingle();
-          
+
           callback({
             ...payload.new,
             participant
@@ -252,7 +279,7 @@ export const orderApi = {
       .select('*')
       .eq('room_id', roomId)
       .order('created_at', { ascending: false });
-    
+
     if (error) throw error;
     return (Array.isArray(data) ? data : []) as Order[];
   },
@@ -264,7 +291,7 @@ export const orderApi = {
       .select('*')
       .eq('stripe_session_id', sessionId)
       .maybeSingle();
-    
+
     if (error) throw error;
     return data as Order | null;
   }

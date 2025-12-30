@@ -4,8 +4,8 @@ import { roomApi, messageApi, participantApi } from '@/db/api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
-import { MessageList } from '@/components/chat/MessageList';
 import { TruthOrDareBot } from '@/components/chat/TruthOrDareBot';
+import { HeartRain } from '@/components/chat/HeartRain';
 import { Progress } from '@/components/ui/progress';
 import { Loader2, Send, Clock, Users, DollarSign, Sparkles, Image as ImageIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -25,6 +25,7 @@ export default function ChatRoomPage() {
   const [sending, setSending] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(0);
   const [participantId, setParticipantId] = useState<string | null>(null);
+  const [showHearts, setShowHearts] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const channelRef = useRef<any>(null);
@@ -67,29 +68,25 @@ export default function ChatRoomPage() {
     return () => clearInterval(interval);
   }, [room]);
 
-  // Auto-scroll to bottom
+  // Auto-scroll to bottom + Heart Rain Check
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+
+    // Check for "I Love U" effect
+    const lastMessage = messages[messages.length - 1];
+    if (lastMessage && lastMessage.content.toLowerCase().includes('i love u')) {
+      console.log('❤️ Triggering Heart Rain');
+      setShowHearts(true);
+      const timer = setTimeout(() => setShowHearts(false), 10000); // 10 seconds
+      return () => clearTimeout(timer);
+    }
   }, [messages]);
 
   const loadRoomData = async () => {
     try {
       setLoading(true);
 
-      // Get participant ID from session
-      const storedParticipantId = sessionStorage.getItem(`participant_${roomId} `);
-      if (!storedParticipantId) {
-        toast({
-          title: 'Access Denied',
-          description: 'Please join the room first',
-          variant: 'destructive'
-        });
-        navigate(`/ join / ${roomId} `);
-        return;
-      }
-      setParticipantId(storedParticipantId);
-
-      // Load room
+      // Load room first to get the Code
       const roomData = await roomApi.getRoomById(roomId!);
       if (!roomData || roomData.status !== 'active') {
         toast({
@@ -101,6 +98,20 @@ export default function ChatRoomPage() {
         return;
       }
       setRoom(roomData);
+
+      // Get participant ID from session
+      const storedParticipantId = sessionStorage.getItem(`participant_${roomId}`);
+      if (!storedParticipantId) {
+        toast({
+          title: 'Access Denied',
+          description: 'Please join the room first',
+          variant: 'destructive'
+        });
+        // Redirect to Join page using the correct ROOM CODE
+        navigate(`/join/${roomData.code}`);
+        return;
+      }
+      setParticipantId(storedParticipantId);
 
       // Load messages
       const messagesData = await messageApi.getRoomMessages(roomId!);
@@ -135,14 +146,14 @@ export default function ChatRoomPage() {
     e?.preventDefault();
     const messageText = textOverride || newMessage;
 
-    if ((!messageText.trim() && !file) || !room || room.status === 'expired') return;
+    if (!messageText.trim() || !room || room.status === 'expired') return;
 
     try {
       setSending(true);
-      const content = newMessage.trim();
+      const content = messageText.trim();
       setNewMessage(''); // Clear input immediately
 
-      const sentMessage = await messageApi.sendMessage(roomId, participantId, content);
+      const sentMessage = await messageApi.sendMessage(roomId!, participantId!, content);
 
       // Manually add to state immediately (Optimistic/Instant update)
       setMessages(prev => {
@@ -180,7 +191,7 @@ export default function ChatRoomPage() {
 
   const handleExtendTime = () => {
     if (roomId) {
-      navigate(`/ extend / ${roomId} `);
+      navigate(`/extend/${roomId}`);
     }
   };
 
@@ -212,6 +223,7 @@ export default function ChatRoomPage() {
 
   return (
     <div className="h-screen w-full overflow-hidden flex relative">
+      {showHearts && <HeartRain />}
       {/* Background / Ad Area (WeTransfer Style) */}
       <div className="absolute inset-0 z-0">
         {/* Animated gradient background base */}
@@ -349,7 +361,7 @@ export default function ChatRoomPage() {
             />
             <Button
               type="submit"
-              disabled={(!newMessage.trim() && !file) || room.status === 'expired'}
+              disabled={!newMessage.trim() || room.status === 'expired'}
             >
               <Send className="w-5 h-5" />
             </Button>

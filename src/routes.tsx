@@ -6,6 +6,7 @@ import ExtendTimePage from './pages/ExtendTimePage';
 import PaymentSuccessPage from './pages/PaymentSuccessPage';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import CreateRoomPage from './pages/admin/CreateRoomPage';
+import SelectPlanPage from './pages/SelectPlanPage';
 import NotFound from './pages/NotFound';
 import type { ReactNode } from 'react';
 
@@ -56,6 +57,11 @@ const routes: RouteConfig[] = [
     name: 'Create Room',
     path: '/admin/create-room',
     element: <CreateRoomPage />
+  },
+  {
+    name: 'Select Plan',
+    path: '/select-plan',
+    element: <SelectPlanPage />
   },
   {
     name: 'Not Found',

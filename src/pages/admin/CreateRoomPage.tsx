@@ -32,15 +32,43 @@ export default function CreateRoomPage() {
     }
   }, []);
 
+  const handlePaymentFlow = async () => {
+    try {
+      setIsLoading(true);
+
+      // Save pending room details
+      sessionStorage.setItem('pending_room_params', JSON.stringify({
+        name: roomName,
+        max_participants: maxParticipants,
+        initial_duration: duration * 60
+      }));
+
+      // Redirect to Plan Selection Page
+      navigate('/select-plan');
+    } catch (err) {
+      console.error('Navigation Error:', err);
+      toast({
+        title: 'Error',
+        description: 'Could not proceed to plan selection.',
+        variant: 'destructive'
+      });
+      setIsLoading(false);
+    }
+  };
+
   const handleCreateRoom = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!roomName.trim()) {
-      toast({
-        title: 'Error',
-        description: 'Please enter a room name',
-        variant: 'destructive'
-      });
+      toast({ title: 'Error', description: 'Please enter a room name', variant: 'destructive' });
+      return;
+    }
+
+    // CHECK: First One Free Logic
+    const myRooms = JSON.parse(localStorage.getItem('my_rooms') || '[]');
+    if (myRooms.length > 0) {
+      // User has already created a room -> Enforce Payment
+      await handlePaymentFlow();
       return;
     }
 
@@ -50,29 +78,19 @@ export default function CreateRoomPage() {
       const newRoom = await roomApi.createRoom({
         name: roomName,
         max_participants: maxParticipants,
-        initial_duration: duration * 60 // convert to seconds
+        initial_duration: duration * 60
       });
 
       setCreatedRoom({ code: newRoom.code, id: newRoom.id });
 
-      // Save to local storage for anonymous dashboard
-      const myRooms = JSON.parse(localStorage.getItem('my_rooms') || '[]');
-      if (!myRooms.includes(newRoom.id)) {
-        myRooms.push(newRoom.id);
-        localStorage.setItem('my_rooms', JSON.stringify(myRooms));
-      }
+      // Save to local storage
+      myRooms.push(newRoom.id);
+      localStorage.setItem('my_rooms', JSON.stringify(myRooms));
 
-      toast({
-        title: 'Success',
-        description: 'Room created successfully!'
-      });
+      toast({ title: 'Success', description: 'Room created successfully!' });
     } catch (err) {
       console.error('Failed to create room:', err);
-      toast({
-        title: 'Error',
-        description: 'Failed to create room',
-        variant: 'destructive'
-      });
+      toast({ title: 'Error', description: 'Failed to create room', variant: 'destructive' });
     } finally {
       setIsLoading(false);
     }
@@ -174,7 +192,7 @@ export default function CreateRoomPage() {
       </Card>
 
       <Dialog open={!!createdRoom} onOpenChange={(open) => !open && setCreatedRoom(null)}>
-        <DialogContent className="glass-card sm:max-w-md">
+        <DialogContent className="bg-[hsl(var(--glass-bg))] backdrop-blur-xl border border-[hsl(var(--glass-border))] shadow-2xl sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="text-center text-2xl gradient-text">Room Ready!</DialogTitle>
             <DialogDescription className="text-center">
@@ -198,7 +216,10 @@ export default function CreateRoomPage() {
                 <Copy className="w-4 h-4 mr-2" />
                 Copy Link
               </Button>
-              <Button className="flex-1" onClick={() => navigate(`/room/${createdRoom?.id}`)}>
+              <Button
+                className="flex-1 transform-none transition-none hover:transform-none !scale-100"
+                onClick={() => navigate(`/room/${createdRoom?.id}`)}
+              >
                 Enter Room
                 <ArrowLeft className="w-4 h-4 ml-2 rotate-180" />
               </Button>

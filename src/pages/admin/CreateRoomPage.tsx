@@ -1,24 +1,36 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 import { roomApi } from '@/db/api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useToast } from '@/hooks/use-toast';
-import { Loader2, ArrowLeft } from 'lucide-react';
-import QRCodeDataUrl from '@/components/ui/qrcodedataurl';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Slider } from '@/components/ui/slider';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Loader2, Copy, ArrowLeft, LayoutDashboard, Share2 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import QRCodeDataUrl from '@/components/ui/qrcodedataurl';
 
 export default function CreateRoomPage() {
   const navigate = useNavigate();
+  const { profile } = useAuth();
   const { toast } = useToast();
-  
+
   const [roomName, setRoomName] = useState('');
   const [maxParticipants, setMaxParticipants] = useState(10);
   const [duration, setDuration] = useState(10); // minutes
-  const [creating, setCreating] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [createdRoom, setCreatedRoom] = useState<{ code: string; id: string } | null>(null);
+
+  // Pre-fill name from URL if reusing
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const nameParam = params.get('name');
+    if (nameParam) {
+      setRoomName(nameParam);
+    }
+  }, []);
 
   const handleCreateRoom = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,15 +45,23 @@ export default function CreateRoomPage() {
     }
 
     try {
-      setCreating(true);
-      const room = await roomApi.createRoom({
+      setIsLoading(true);
+
+      const newRoom = await roomApi.createRoom({
         name: roomName,
         max_participants: maxParticipants,
         initial_duration: duration * 60 // convert to seconds
       });
 
-      setCreatedRoom({ code: room.code, id: room.id });
-      
+      setCreatedRoom({ code: newRoom.code, id: newRoom.id });
+
+      // Save to local storage for anonymous dashboard
+      const myRooms = JSON.parse(localStorage.getItem('my_rooms') || '[]');
+      if (!myRooms.includes(newRoom.id)) {
+        myRooms.push(newRoom.id);
+        localStorage.setItem('my_rooms', JSON.stringify(myRooms));
+      }
+
       toast({
         title: 'Success',
         description: 'Room created successfully!'
@@ -54,145 +74,133 @@ export default function CreateRoomPage() {
         variant: 'destructive'
       });
     } finally {
-      setCreating(false);
+      setIsLoading(false);
+    }
+  };
+
+  const copyRoomLink = () => {
+    if (createdRoom) {
+      const url = `${window.location.origin}/join/${createdRoom.code}`;
+      navigator.clipboard.writeText(url);
+      toast({
+        title: 'Copied!',
+        description: 'Room link copied to clipboard'
+      });
     }
   };
 
   const roomUrl = createdRoom ? `${window.location.origin}/join/${createdRoom.code}` : '';
 
   return (
-    <div className="min-h-screen p-4">
-      <div className="container mx-auto max-w-2xl py-8">
-        <Button
-          variant="ghost"
-          onClick={() => navigate('/admin')}
-          className="mb-4"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Dashboard
-        </Button>
+    <div className="min-h-screen p-4 flex items-center justify-center relative overflow-hidden">
+      {/* Background blobs */}
+      <div className="absolute top-20 left-20 w-72 h-72 bg-primary/10 rounded-full blur-3xl float" />
+      <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl float-delayed" />
 
-        <Card className="glass-card">
-          <CardHeader>
-            <CardTitle className="text-3xl gradient-text">Create New Room</CardTitle>
-            <CardDescription>
-              Set up a new anonymous chat room with custom settings
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleCreateRoom} className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="roomName">Room Name</Label>
-                <Input
-                  id="roomName"
-                  placeholder="e.g., Secret Confessions"
-                  value={roomName}
-                  onChange={(e) => setRoomName(e.target.value)}
-                  disabled={creating}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="maxParticipants">Maximum Participants</Label>
-                <Input
-                  id="maxParticipants"
-                  type="number"
-                  min="2"
-                  max="100"
-                  value={maxParticipants}
-                  onChange={(e) => setMaxParticipants(Number(e.target.value))}
-                  disabled={creating}
-                />
-                <p className="text-xs text-muted-foreground">
-                  Maximum number of people who can join this room
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="duration">Initial Duration (minutes)</Label>
-                <Input
-                  id="duration"
-                  type="number"
-                  min="5"
-                  max="120"
-                  value={duration}
-                  onChange={(e) => setDuration(Number(e.target.value))}
-                  disabled={creating}
-                />
-                <p className="text-xs text-muted-foreground">
-                  How long the room will stay active (can be extended later)
-                </p>
-              </div>
-
-              <Button 
-                type="submit" 
-                className="w-full" 
-                size="lg"
-                disabled={creating}
-              >
-                {creating ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Creating...
-                  </>
-                ) : (
-                  'Create Room'
-                )}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Success Dialog with QR Code */}
-      <Dialog open={!!createdRoom} onOpenChange={(open) => !open && setCreatedRoom(null)}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-2xl gradient-text">Room Created!</DialogTitle>
-            <DialogDescription>
-              Share this code or QR code with participants
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-6">
-            <div className="text-center space-y-2">
-              <p className="text-sm text-muted-foreground">Room Code</p>
-              <p className="text-4xl font-bold font-mono text-primary neon-glow">
-                {createdRoom?.code}
-              </p>
+      <Card className="glass-card w-full max-w-lg relative z-10 border-primary/20">
+        <CardHeader>
+          <div className="flex items-center gap-2 mb-2">
+            <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => navigate(-1)}>
+              <ArrowLeft className="w-4 h-4" />
+            </Button>
+            <CardTitle className="text-2xl gradient-text">Create Secret Room</CardTitle>
+          </div>
+          <CardDescription>
+            Configure your anonymous room settings
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleCreateRoom} className="space-y-6">
+            <div className="space-y-2">
+              <Label htmlFor="roomName">Room Name</Label>
+              <Input
+                id="roomName"
+                placeholder="e.g. Late Night Talks"
+                value={roomName}
+                onChange={(e) => setRoomName(e.target.value)}
+                required
+                className="bg-background/50"
+                disabled={isLoading}
+              />
             </div>
 
-            <div className="flex justify-center">
+            <div className="space-y-4">
+              <div className="flex justify-between">
+                <Label>Max Participants</Label>
+                <span className="text-sm font-mono text-primary">{maxParticipants}</span>
+              </div>
+              <Slider
+                value={[maxParticipants]}
+                onValueChange={(vals) => setMaxParticipants(vals[0])}
+                min={2}
+                max={50}
+                step={1}
+                className="py-4"
+                disabled={isLoading}
+              />
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex justify-between">
+                <Label>Initial Duration (Minutes)</Label>
+                <span className="text-sm font-mono text-primary">{duration}m</span>
+              </div>
+              <Slider
+                value={[duration]}
+                onValueChange={(vals) => setDuration(vals[0])}
+                min={5}
+                max={60}
+                step={5}
+                className="py-4"
+                disabled={isLoading}
+              />
+            </div>
+
+            <Button type="submit" className="w-full btn-shimmer group" size="lg" disabled={isLoading}>
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Creating Universe...
+                </>
+              ) : (
+                <>
+                  Create Room
+                  <ArrowLeft className="w-4 h-4 ml-2 rotate-180 transition-transform group-hover:translate-x-1" />
+                </>
+              )}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+
+      <Dialog open={!!createdRoom} onOpenChange={(open) => !open && setCreatedRoom(null)}>
+        <DialogContent className="glass-card sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-center text-2xl gradient-text">Room Ready!</DialogTitle>
+            <DialogDescription className="text-center">
+              Share this code or QR with your friends
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col items-center gap-6 py-4">
+            <div className="bg-white p-4 rounded-xl">
               <QRCodeDataUrl text={roomUrl} width={200} />
             </div>
 
-            <div className="space-y-2">
-              <Label>Share Link</Label>
-              <div className="flex gap-2">
-                <Input value={roomUrl} readOnly className="font-mono text-sm" />
-                <Button
-                  onClick={() => {
-                    navigator.clipboard.writeText(roomUrl);
-                    toast({ title: 'Copied!', description: 'Link copied to clipboard' });
-                  }}
-                >
-                  Copy
-                </Button>
+            <div className="text-center space-y-2 w-full">
+              <p className="text-sm text-muted-foreground">Room Code</p>
+              <div className="text-4xl font-mono font-bold tracking-wider text-primary select-all">
+                {createdRoom?.code}
               </div>
             </div>
 
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                className="flex-1"
-                onClick={() => navigate('/admin')}
-              >
-                Dashboard
+            <div className="flex gap-2 w-full">
+              <Button variant="outline" className="flex-1" onClick={copyRoomLink}>
+                <Copy className="w-4 h-4 mr-2" />
+                Copy Link
               </Button>
-              <Button
-                className="flex-1"
-                onClick={() => navigate(`/room/${createdRoom?.id}`)}
-              >
+              <Button className="flex-1" onClick={() => navigate(`/room/${createdRoom?.id}`)}>
                 Enter Room
+                <ArrowLeft className="w-4 h-4 ml-2 rotate-180" />
               </Button>
             </div>
           </div>

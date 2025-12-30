@@ -3,26 +3,28 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { 
-  Sparkles, 
-  LogIn, 
-  UserCircle, 
-  LogOut, 
-  Shield, 
-  Clock, 
-  Zap, 
-  Users, 
-  Lock, 
-  Trash2, 
-  QrCode, 
-  MessageSquare, 
+import {
+  Sparkles,
+  LogIn,
+  UserCircle,
+  LogOut,
+  Shield,
+  Clock,
+  Zap,
+  Users,
+  Lock,
+  Trash2,
+  QrCode,
+  MessageSquare,
   Timer,
   CheckCircle,
   Moon,
-  Sun
+  Sun,
+  ArrowRight,
+  Terminal
 } from 'lucide-react';
 
 export default function LandingPage() {
@@ -216,21 +218,25 @@ export default function LandingPage() {
                     <UserCircle className="w-4 h-4" />
                     {profile.username}
                   </span>
-                  {profile.role === 'admin' && (
-                    <Button variant="outline" size="sm" onClick={handleAdminDashboard}>
-                      Dashboard
-                    </Button>
-                  )}
+
+                  <Button variant="outline" size="sm" onClick={handleAdminDashboard}>
+                    Dashboard
+                  </Button>
                   <Button variant="ghost" size="sm" onClick={signOut}>
                     <LogOut className="w-4 h-4 xl:mr-2" />
                     <span className="hidden xl:inline">Logout</span>
                   </Button>
                 </>
               ) : (
-                <Button variant="outline" size="sm" onClick={() => navigate('/login')}>
-                  <LogIn className="w-4 h-4 xl:mr-2" />
-                  <span className="hidden xl:inline">Admin Login</span>
-                </Button>
+                <>
+                  <Button variant="outline" size="sm" onClick={() => navigate('/login')}>
+                    <LogIn className="w-4 h-4 xl:mr-2" />
+                    <span className="hidden xl:inline">Admin Login</span>
+                  </Button>
+                  <Button variant="ghost" size="sm" onClick={handleAdminDashboard}>
+                    My Rooms
+                  </Button>
+                </>
               )}
             </div>
           </div>
@@ -239,26 +245,33 @@ export default function LandingPage() {
 
       {/* Hero Section */}
       <section className="relative py-20 xl:py-32 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent" />
-        <div className="container mx-auto px-4 relative">
+        {/* Animated gradient background */}
+        <div className="absolute inset-0 gradient-bg" />
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/10 via-transparent to-transparent" />
+
+        {/* Floating decorative elements */}
+        <div className="absolute top-20 left-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl float" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl float-delayed" />
+
+        <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center space-y-8">
             <Badge variant="outline" className="text-sm px-4 py-1">
               🎭 Ephemeral Anonymous Chat Platform
             </Badge>
-            <h2 className="text-4xl xl:text-7xl font-bold gradient-text neon-glow leading-tight">
+            <h2 className="text-4xl xl:text-7xl font-bold gradient-text neon-glow leading-tight fade-in-up stagger-2">
               Share Secrets.<br />Leave No Trace.
             </h2>
-            <p className="text-lg xl:text-2xl text-muted-foreground max-w-3xl mx-auto">
+            <p className="text-lg xl:text-2xl text-muted-foreground max-w-3xl mx-auto fade-in-up stagger-3">
               Time-limited anonymous chat rooms where conversations vanish into the void.
               No signup. No history. Complete privacy.
             </p>
-            <div className="flex flex-col xl:flex-row gap-4 justify-center items-center pt-4">
-              <Button size="lg" className="text-lg px-8 py-6" onClick={() => document.getElementById('join')?.scrollIntoView({ behavior: 'smooth' })}>
+            <div className="flex flex-col xl:flex-row gap-4 justify-center items-center pt-4 fade-in-up stagger-4">
+              <Button size="lg" className="text-lg px-8 py-6 btn-shimmer hover-scale" onClick={() => document.getElementById('join')?.scrollIntoView({ behavior: 'smooth' })}>
                 <Sparkles className="w-5 h-5 mr-2" />
                 Join a Room Now
               </Button>
               {profile?.role === 'admin' && (
-                <Button size="lg" variant="outline" className="text-lg px-8 py-6" onClick={handleCreateRoom}>
+                <Button size="lg" variant="outline" className="text-lg px-8 py-6 btn-shimmer hover-scale" onClick={handleCreateRoom}>
                   Create Room
                 </Button>
               )}
@@ -295,10 +308,10 @@ export default function LandingPage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 max-w-6xl mx-auto">
             {features.map((feature, index) => (
-              <Card key={index} className="glass-card hover:border-primary/50 transition-all duration-300 hover:scale-105">
+              <Card key={index} className={`glass-card hover:border-primary/50 transition-all duration-500 fade-in-up stagger-${(index % 6) + 1}`}>
                 <CardHeader>
-                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                    <feature.icon className="w-6 h-6 text-primary" />
+                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 hover-scale">
+                    <feature.icon className="w-6 h-6 text-primary transition-transform duration-300" />
                   </div>
                   <CardTitle className="text-xl">{feature.title}</CardTitle>
                 </CardHeader>
@@ -326,10 +339,10 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 xl:grid-cols-4 gap-8 max-w-6xl mx-auto">
             {howItWorks.map((item, index) => (
               <div key={index} className="relative">
-                <Card className="glass-card h-full">
+                <Card className={`glass-card h-full fade-in-up stagger-${index + 1}`}>
                   <CardHeader>
-                    <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4 mx-auto">
-                      <item.icon className="w-8 h-8 text-primary" />
+                    <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4 mx-auto hover-scale">
+                      <item.icon className="w-8 h-8 text-primary transition-transform duration-300" />
                     </div>
                     <div className="text-center">
                       <Badge className="mb-2">Step {item.step}</Badge>
@@ -363,11 +376,11 @@ export default function LandingPage() {
               Start free with 10 minutes. Extend anytime with flexible pricing options.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 max-w-7xl mx-auto">
             {pricingPlans.map((plan, index) => (
-              <Card 
-                key={index} 
-                className={`glass-card relative ${plan.popular ? 'border-primary shadow-lg shadow-primary/20 scale-105' : ''}`}
+              <Card
+                key={index}
+                className={`glass-card relative transition-all duration-500 hover:scale-105 hover:border-primary/50 ${plan.popular ? 'border-primary shadow-lg shadow-primary/20 scale-105 glow-border' : ''}`}
               >
                 {plan.popular && (
                   <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
@@ -391,6 +404,12 @@ export default function LandingPage() {
                     ))}
                   </ul>
                 </CardContent>
+                <CardFooter>
+                  <Button className="w-full btn-shimmer group" variant={plan.popular ? 'default' : 'outline'}>
+                    Choose Plan
+                    <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
+                  </Button>
+                </CardFooter>
               </Card>
             ))}
           </div>
@@ -402,14 +421,16 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Join Section */}
+      {/* Join Room Section */}
       <section id="join" className="py-20 xl:py-32">
         <div className="container mx-auto px-4">
-          <div className="max-w-2xl mx-auto">
-            <Card className="glass-card border-primary/50">
-              <CardHeader className="text-center">
-                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4 mx-auto">
-                  <Sparkles className="w-8 h-8 text-primary" />
+          <div className="max-w-2xl mx-auto relative">
+            <div className="absolute inset-0 bg-primary/20 blur-[100px] rounded-full opacity-20" />
+            <Card className="glass-card relative border-primary/20 overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50" />
+              <CardHeader className="text-center pb-2">
+                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-6 mx-auto hover-scale">
+                  <Terminal className="w-8 h-8 text-primary" />
                 </div>
                 <CardTitle className="text-3xl gradient-text">Join a Room</CardTitle>
                 <CardDescription className="text-base">
@@ -423,14 +444,14 @@ export default function LandingPage() {
                     value={roomCode}
                     onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
                     onKeyDown={(e) => e.key === 'Enter' && handleJoinRoom()}
-                    className="text-lg h-14 text-center font-mono tracking-widest"
+                    className="text-lg h-14 text-center font-mono tracking-widest bg-background/50 border-primary/20 focus:border-primary"
                     maxLength={6}
                   />
-                  <Button 
-                    onClick={handleJoinRoom} 
-                    size="lg" 
+                  <Button
+                    onClick={handleJoinRoom}
+                    size="lg"
                     disabled={!roomCode.trim()}
-                    className="h-14 px-8"
+                    className="h-14 px-8 btn-shimmer hover-scale shrink-0"
                   >
                     Join a Room
                   </Button>
@@ -438,15 +459,9 @@ export default function LandingPage() {
                 <Separator />
                 <div className="text-center space-y-2">
                   <p className="text-sm text-muted-foreground">Don't have a code?</p>
-                  {profile?.role === 'admin' ? (
-                    <Button variant="outline" onClick={handleCreateRoom} className="w-full">
-                      अपना खुद का Create Room
-                    </Button>
-                  ) : (
-                    <p className="text-xs text-muted-foreground">
-                      Ask an admin to create a room and share the code with you
-                    </p>
-                  )}
+                  <Button variant="outline" onClick={() => navigate('/admin/create-room')} className="w-full btn-shimmer hover-scale">
+                    Create a Secret Room
+                  </Button>
                 </div>
               </CardContent>
             </Card>
@@ -455,16 +470,17 @@ export default function LandingPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-b from-primary/10 to-transparent">
-        <div className="container mx-auto px-4 text-center">
-          <div className="max-w-3xl mx-auto space-y-6">
+      <section className="py-20 bg-gradient-to-b from-primary/10 to-transparent relative overflow-hidden">
+        <div className="absolute inset-0 gradient-bg opacity-50" />
+        <div className="container mx-auto px-4 text-center relative z-10">
+          <div className="max-w-3xl mx-auto space-y-6 fade-in-up">
             <h3 className="text-3xl xl:text-5xl font-bold gradient-text">
               Ready to Share Anonymously?
             </h3>
             <p className="text-lg text-muted-foreground">
-              हजारों यूजर्स में शामिल हों जो निजी, एफेमेरल बातचीत के लिए Secret Room पर भरोसा करते हैं।
+              Join thousands of users who trust Secret Room for private, ephemeral conversations.
             </p>
-            <Button size="lg" className="text-lg px-8 py-6" onClick={() => document.getElementById('join')?.scrollIntoView({ behavior: 'smooth' })}>
+            <Button size="lg" className="text-lg px-8 py-6 btn-shimmer hover-scale" onClick={() => document.getElementById('join')?.scrollIntoView({ behavior: 'smooth' })}>
               <Sparkles className="w-5 h-5 mr-2" />
               Get Started Free
             </Button>
@@ -512,11 +528,9 @@ export default function LandingPage() {
           </div>
           <Separator className="my-8" />
           <div className="flex flex-col xl:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
-            <p>© 2025 Secret Room. सभी बातचीत एफेमेरल हैं।</p>
+            <p>© 2025 Secret Room. All conversations are ephemeral.</p>
             <div className="flex items-center gap-4">
               <span>Built with privacy in mind</span>
-              <span>•</span>
-              <span>Powered by Supabase & Stripe</span>
             </div>
           </div>
         </div>

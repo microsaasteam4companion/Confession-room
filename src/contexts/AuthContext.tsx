@@ -52,18 +52,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       setLoading(false);
     });
-    
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
       if (session?.user) {
         getProfile(session.user.id).then(setProfile);
       } else {
         setProfile(null);
+        setUser(null); // Ensure user is cleared on sign out
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [user]);
+  }, []);
 
   const signIn = async (username: string, password: string) => {
     try {

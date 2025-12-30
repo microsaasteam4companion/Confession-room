@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { roomApi, participantApi } from '@/db/api';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, AlertCircle } from 'lucide-react';
+import { Loader2, AlertCircle, Sparkles, UserCircle, ArrowRight } from 'lucide-react';
 import type { Room } from '@/types';
 
 export default function JoinRoomPage() {
@@ -29,7 +29,7 @@ export default function JoinRoomPage() {
       setLoading(true);
       setError(null);
       const roomData = await roomApi.getRoomByCode(code!);
-      
+
       if (!roomData) {
         setError('Room not found or has expired');
         return;
@@ -56,17 +56,17 @@ export default function JoinRoomPage() {
 
     try {
       setJoining(true);
-      
+
       // Generate random avatar name
       const avatarName = participantApi.generateAvatarName();
-      
+
       // Join room
       const participant = await participantApi.joinRoom(room.id, avatarName);
-      
+
       // Store participant ID in sessionStorage
       sessionStorage.setItem(`participant_${room.id}`, participant.id);
       sessionStorage.setItem(`avatar_${room.id}`, avatarName);
-      
+
       // Navigate to chat room
       navigate(`/room/${room.id}`);
     } catch (err) {
@@ -78,26 +78,31 @@ export default function JoinRoomPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      <div className="min-h-screen flex items-center justify-center bg-background relative overflow-hidden">
+        <div className="absolute inset-0 gradient-bg opacity-20" />
+        <div className="relative z-10 flex flex-col items-center gap-4">
+          <Loader2 className="w-12 h-12 animate-spin text-primary" />
+          <p className="text-muted-foreground animate-pulse">Locating secure channel...</p>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <Card className="w-full max-w-md glass-card">
+      <div className="min-h-screen flex items-center justify-center p-4 bg-background relative overflow-hidden">
+        <div className="absolute inset-0 gradient-bg opacity-20" />
+        <Card className="w-full max-w-md glass-card relative z-10 border-destructive/50">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-destructive">
               <AlertCircle className="w-6 h-6" />
-              Error
+              Connection Error
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-muted-foreground">{error}</p>
-            <Button onClick={() => navigate('/')} className="w-full">
-              Back to Home
+            <Button onClick={() => navigate('/')} className="w-full" variant="outline">
+              Return to Safe Zone
             </Button>
           </CardContent>
         </Card>
@@ -113,59 +118,77 @@ export default function JoinRoomPage() {
   const minutesRemaining = Math.floor(timeRemaining / 60000);
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <Card className="w-full max-w-md glass-card">
-        <CardHeader>
-          <CardTitle className="text-3xl gradient-text text-center">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-background relative overflow-hidden">
+      {/* Animated Background */}
+      <div className="absolute inset-0 gradient-bg opacity-30" />
+      <div className="absolute top-20 left-20 w-72 h-72 bg-primary/10 rounded-full blur-3xl float" />
+      <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl float-delayed" />
+
+      <Card className="w-full max-w-md glass-card relative z-10 glow-border animate-in zoom-in fade-in duration-500">
+        <CardHeader className="text-center pb-2">
+          <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4 mx-auto float">
+            <Sparkles className="w-8 h-8 text-primary" />
+          </div>
+          <CardTitle className="text-3xl gradient-text font-bold">
             {room.name}
           </CardTitle>
-          <CardDescription className="text-center">
-            Room Code: <span className="font-mono font-bold text-primary">{room.code}</span>
+          <CardDescription className="text-base mt-2">
+            Invited to join secure room <br />
+            <span className="font-mono font-bold text-primary bg-primary/5 px-2 py-0.5 rounded border border-primary/20">
+              {room.code}
+            </span>
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="space-y-2 text-center">
-            <p className="text-sm text-muted-foreground">
-              Time Remaining: <span className="font-bold text-foreground">{minutesRemaining} minutes</span>
-            </p>
-            <p className="text-sm text-muted-foreground">
-              Max Participants: <span className="font-bold text-foreground">{room.max_participants}</span>
+        <CardContent className="space-y-8">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-white/5 p-3 rounded-xl text-center border border-white/10 hover:border-primary/30 transition-colors">
+              <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Duration</p>
+              <p className="text-xl font-bold font-mono">{minutesRemaining}m</p>
+            </div>
+            <div className="bg-white/5 p-3 rounded-xl text-center border border-white/10 hover:border-primary/30 transition-colors">
+              <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Capacity</p>
+              <p className="text-xl font-bold font-mono">{room.max_participants}</p>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <div className="flex items-center gap-3 text-sm text-muted-foreground p-3 rounded-lg bg-primary/5 border border-primary/10">
+              <UserCircle className="w-5 h-5 text-primary shrink-0" />
+              <p>You will be assigned a random <span className="text-primary font-semibold">Anonymous Avatar</span></p>
+            </div>
+            <p className="text-xs text-center text-muted-foreground/60">
+              ⚠️ Chat history wipes automatically when timer ends
             </p>
           </div>
 
-          <div className="space-y-2">
-            <h3 className="font-semibold">Rules:</h3>
-            <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
-              <li>You will be assigned a random anonymous avatar</li>
-              <li>All messages are ephemeral and will be deleted when the timer expires</li>
-              <li>Be respectful and follow community guidelines</li>
-              <li>No personal information should be shared</li>
-            </ul>
+          <div className="space-y-3 pt-2">
+            <Button
+              onClick={handleJoinRoom}
+              className="w-full h-12 text-lg btn-shimmer hover-scale shadow-lg shadow-primary/20"
+              size="lg"
+              disabled={joining}
+            >
+              {joining ? (
+                <>
+                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                  Establishing Connection...
+                </>
+              ) : (
+                <>
+                  Join Room Now
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </>
+              )}
+            </Button>
+
+            <Button
+              onClick={() => navigate('/')}
+              variant="ghost"
+              className="w-full text-muted-foreground hover:text-foreground"
+            >
+              Cancel
+            </Button>
           </div>
-
-          <Button 
-            onClick={handleJoinRoom} 
-            className="w-full" 
-            size="lg"
-            disabled={joining}
-          >
-            {joining ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Joining...
-              </>
-            ) : (
-              'Join Room Anonymously'
-            )}
-          </Button>
-
-          <Button 
-            onClick={() => navigate('/')} 
-            variant="outline" 
-            className="w-full"
-          >
-            Cancel
-          </Button>
         </CardContent>
       </Card>
     </div>

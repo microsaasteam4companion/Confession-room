@@ -5,7 +5,7 @@ import { roomApi } from '@/db/api';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Plus, Clock, Users, ExternalLink, ArrowLeft } from 'lucide-react';
+import { Loader2, Plus, Clock, Users, ExternalLink, ArrowLeft, Trash2, RefreshCw } from 'lucide-react';
 import type { Room } from '@/types';
 
 export default function AdminDashboard() {
@@ -15,25 +15,46 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (profile?.role !== 'admin') {
-      navigate('/');
-      return;
-    }
+    // Check if user has rooms in local storage or is admin
+    loadRooms(true);
+  }, [profile?.id]);
 
-    loadRooms();
-  }, [profile]);
-
-  const loadRooms = async () => {
+  const loadRooms = async (isInitialLoad = false) => {
     try {
-      setLoading(true);
+      if (isInitialLoad) setLoading(true);
+
+      let allRooms: Room[] = [];
+
+      // Load from Supabase if logged in
       if (profile?.id) {
-        const roomsData = await roomApi.getUserRooms(profile.id);
-        setRooms(roomsData);
+        const userRooms = await roomApi.getUserRooms(profile.id);
+        allRooms = [...userRooms];
       }
+
+      // Load from local storage (anonymous rooms)
+      const myRoomsIds = JSON.parse(localStorage.getItem('my_rooms') || '[]');
+      if (myRoomsIds.length > 0) {
+        // Fetch details for each room ID
+        const localRoomsPromises = myRoomsIds.map((id: string) => roomApi.getRoomById(id));
+        const localRooms = await Promise.all(localRoomsPromises);
+
+        // Filter out nulls and duplicates
+        const existingIds = new Set(allRooms.map(r => r.id));
+        localRooms.forEach(room => {
+          if (room && !existingIds.has(room.id)) {
+            allRooms.push(room);
+          }
+        });
+      }
+
+      // Sort by created_at desc
+      allRooms.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+
+      setRooms(allRooms);
     } catch (err) {
       console.error('Failed to load rooms:', err);
     } finally {
-      setLoading(false);
+      if (isInitialLoad) setLoading(false);
     }
   };
 
@@ -44,8 +65,12 @@ export default function AdminDashboard() {
     return { minutes, seconds, expired: remaining === 0 };
   };
 
-  const activeRooms = rooms.filter(r => r.status === 'active');
-  const expiredRooms = rooms.filter(r => r.status === 'expired');
+  const isRoomExpired = (room: Room) => {
+    return room.status === 'expired' || new Date(room.expires_at).getTime() < Date.now();
+  };
+
+  const activeRooms = rooms.filter(r => !isRoomExpired(r));
+  const expiredRooms = rooms.filter(r => isRoomExpired(r));
 
   return (
     <div className="min-h-screen p-4">
@@ -161,10 +186,47 @@ export default function AdminDashboard() {
                           <Badge variant="secondary">Expired</Badge>
                         </div>
                       </CardHeader>
-                      <CardContent>
+                      <CardContent className="space-y-4">
                         <p className="text-sm text-muted-foreground">
                           Expired: {new Date(room.expires_at).toLocaleString()}
                         </p>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="outline"
+                            className="flex-1"
+                            onClick={() => {
+                              // Reuse: Navigate to create with same name
+                              navigate(`/admin/create-room?name=${encodeURIComponent(room.name)}`);
+                            }}
+                          >
+                            <RefreshCw className="w-4 h-4 mr-2" />
+                            Reuse
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            size="icon"
+                            onClick={async () => {
+                              if (confirm('Are you sure you want to delete this room history?')) {
+                                try {
+                                  // Remove from local storage
+                                  const myRoomsIds = JSON.parse(localStorage.getItem('my_rooms') || '[]');
+                                  const newIds = myRoomsIds.filter((id: string) => id !== room.id);
+                                  localStorage.setItem('my_rooms', JSON.stringify(newIds));
+
+                                  // Remove from UI
+                                  setRooms(prev => prev.filter(r => r.id !== room.id));
+
+                                  // Optional: Call API to mark deleted if needed
+                                  // await roomApi.deleteRoom(room.id); 
+                                } catch (err) {
+                                  console.error('Failed to delete', err);
+                                }
+                              }
+                            }}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
                       </CardContent>
                     </Card>
                   ))}

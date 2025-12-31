@@ -9,6 +9,7 @@ interface RouteGuardProps {
 // Please add the pages that can be accessed without logging in to PUBLIC_ROUTES.
 const PUBLIC_ROUTES = [
   '/',
+  '/wall',
   '/login',
   '/403',
   '/404',

@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
 import { roomApi } from '@/db/api';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,26 +9,18 @@ import type { Room } from '@/types';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
-  const { profile } = useAuth();
   const [rooms, setRooms] = useState<Room[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user has rooms in local storage or is admin
     loadRooms(true);
-  }, [profile?.id]);
+  }, []);
 
   const loadRooms = async (isInitialLoad = false) => {
     try {
       if (isInitialLoad) setLoading(true);
 
       let allRooms: Room[] = [];
-
-      // Load from Supabase if logged in
-      if (profile?.id) {
-        const userRooms = await roomApi.getUserRooms(profile.id);
-        allRooms = [...userRooms];
-      }
 
       // Load from local storage (anonymous rooms)
       const myRoomsIds = JSON.parse(localStorage.getItem('my_rooms') || '[]');
@@ -75,20 +66,21 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen p-4">
       <div className="container mx-auto max-w-6xl py-8 space-y-6">
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <Button
               variant="ghost"
               onClick={() => navigate('/')}
-              className="mb-2"
+              className="mb-2 -ml-2"
+              size="sm"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Home
             </Button>
-            <h1 className="text-4xl font-bold gradient-text">Admin Dashboard</h1>
-            <p className="text-muted-foreground">Manage your anonymous chat rooms</p>
+            <h1 className="text-3xl md:text-4xl font-bold gradient-text">Admin Dashboard</h1>
+            <p className="text-sm md:text-base text-muted-foreground">Manage your anonymous chat rooms</p>
           </div>
-          <Button onClick={() => navigate('/admin/create-room')} size="lg">
+          <Button onClick={() => navigate('/admin/create-room')} size="lg" className="w-full md:w-auto">
             <Plus className="w-5 h-5 mr-2" />
             Create Room
           </Button>

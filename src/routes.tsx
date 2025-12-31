@@ -1,5 +1,4 @@
 import LandingPage from './pages/LandingPage';
-import LoginPage from './pages/LoginPage';
 import JoinRoomPage from './pages/JoinRoomPage';
 import ChatRoomPage from './pages/ChatRoomPage';
 import ExtendTimePage from './pages/ExtendTimePage';
@@ -7,6 +6,7 @@ import PaymentSuccessPage from './pages/PaymentSuccessPage';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import CreateRoomPage from './pages/admin/CreateRoomPage';
 import SelectPlanPage from './pages/SelectPlanPage';
+import PublicWallPage from './pages/PublicWallPage';
 import NotFound from './pages/NotFound';
 import type { ReactNode } from 'react';
 
@@ -24,9 +24,9 @@ const routes: RouteConfig[] = [
     element: <LandingPage />
   },
   {
-    name: 'Login',
-    path: '/login',
-    element: <LoginPage />
+    name: 'Global Wall',
+    path: '/wall',
+    element: <PublicWallPage />
   },
   {
     name: 'Join Room',

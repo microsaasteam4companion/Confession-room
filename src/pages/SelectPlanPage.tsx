@@ -55,33 +55,31 @@ export default function SelectPlanPage() {
 
     const plans = [
         {
-            id: 'basic',
-            name: 'Basic Room',
-            price: '₹49',
-            priceValue: 49,
-            durationBonus: 0,
-            description: 'Perfect for quick chats',
-            features: ['10 Minutes Duration', 'Up to 10 Participants', 'Standard Support'],
-            popular: false
-        },
-        {
-            id: 'pro',
-            name: 'Pro Room',
-            price: '₹99',
-            priceValue: 99,
-            durationBonus: 20 * 60, // +20 mins
-            description: 'Extended conversations',
-            features: ['30 Minutes Duration', 'Up to 50 Participants', 'Priority Support', '+20 Mins Bonus Time'],
+            name: 'Standard',
+            price: '₹29',
+            priceValue: 29,
+            duration: '+15 minutes',
+            features: [
+                'All free features',
+                'Extended chat time',
+                'Better value',
+                'Multiple extensions',
+                'Priority support'
+            ],
             popular: true
         },
         {
-            id: 'vip',
-            name: 'VIP Lounge',
-            price: '₹199',
-            priceValue: 199,
-            durationBonus: 60 * 60, // +60 mins
-            description: 'Maximum privacy & time',
-            features: ['1 Hour Duration', 'Unlimited Participants', 'VIP Badge', '+60 Mins Bonus Time'],
+            name: 'Premium',
+            price: '₹99',
+            priceValue: 99,
+            duration: '+1 hour',
+            features: [
+                'All free features',
+                'Maximum chat time',
+                'Best value per minute',
+                'Deep conversations',
+                'VIP experience'
+            ],
             popular: false
         }
     ];
@@ -90,54 +88,60 @@ export default function SelectPlanPage() {
 
     return (
         <div className="min-h-screen p-4 flex flex-col items-center justify-center relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-primary/5" />
+            <div className="absolute inset-0 gradient-bg" />
 
             <div className="relative z-10 w-full max-w-5xl space-y-8">
-                <div className="text-center space-y-4">
-                    <Badge variant="outline" className="px-4 py-1">Upgrade Required</Badge>
-                    <h1 className="text-4xl font-bold gradient-text">Select Your Room Plan</h1>
-                    <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                        You've used your "First One Free". To create "{roomParams.name}", please choose a plan.
+                <div className="text-center space-y-3 md:space-y-4">
+                    <Badge variant="outline" className="px-3 py-0.5 md:px-4 md:py-1 text-xs md:text-sm">Upgrade Required</Badge>
+                    <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold gradient-text neon-glow">Select Your Room Plan</h1>
+                    <p className="text-muted-foreground text-base md:text-lg max-w-2xl mx-auto px-4">
+                        You've used your "First One Free". To create "{roomParams.name}", please choose a plan to continue.
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {plans.map((plan) => (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 max-w-3xl mx-auto w-full">
+                    {plans.map((plan, index) => (
                         <Card
-                            key={plan.id}
-                            className={`glass-card relative transition-all duration-300 hover:scale-105 ${plan.popular ? 'border-primary shadow-lg shadow-primary/20 scale-105' : ''}`}
+                            key={index}
+                            className={`glass-card relative transition-all duration-500 hover:scale-105 hover:border-primary/50 ${plan.popular ? 'border-primary shadow-lg shadow-primary/20 scale-100 md:scale-105 glow-border' : ''}`}
                         >
                             {plan.popular && (
                                 <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                                    <Badge className="bg-primary text-primary-foreground">Most Popular</Badge>
+                                    <Badge className="bg-primary text-primary-foreground text-[10px] md:text-xs">Most Popular</Badge>
                                 </div>
                             )}
-                            <CardHeader className="text-center">
-                                <CardTitle className="text-2xl">{plan.name}</CardTitle>
-                                <CardDescription>{plan.description}</CardDescription>
-                                <div className="py-4">
-                                    <div className="text-4xl font-bold text-primary">{plan.price}</div>
+                            <CardHeader className="text-center p-4 md:p-6">
+                                <CardTitle className="text-xl md:text-2xl">{plan.name}</CardTitle>
+                                <div className="py-2 md:py-4">
+                                    <div className="text-3xl md:text-4xl font-bold text-primary">{plan.price}</div>
+                                    <div className="text-xs md:text-sm text-muted-foreground mt-1">{plan.duration}</div>
                                 </div>
                             </CardHeader>
-                            <CardContent>
-                                <ul className="space-y-3">
+                            <CardContent className="p-4 md:p-6 pt-0">
+                                <ul className="space-y-2 md:space-y-3">
                                     {plan.features.map((feature, idx) => (
-                                        <li key={idx} className="flex items-start gap-2 text-sm text-muted-foreground">
-                                            <CheckCircle className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                                        <li key={idx} className="flex items-start gap-2 text-xs md:text-sm">
+                                            <CheckCircle className="w-3.5 h-3.5 md:w-4 md:h-4 text-primary mt-0.5 shrink-0" />
                                             <span>{feature}</span>
                                         </li>
                                     ))}
                                 </ul>
                             </CardContent>
-                            <CardFooter>
+                            <CardFooter className="p-4 md:p-6 pt-0">
                                 <Button
-                                    className="w-full btn-shimmer group"
+                                    className="w-full h-10 md:h-12 btn-shimmer group"
                                     variant={plan.popular ? 'default' : 'outline'}
                                     onClick={() => handleSelectPlan(plan)}
                                     disabled={loading}
                                 >
-                                    {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Select Plan'}
-                                    {!loading && <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />}
+                                    {loading ? (
+                                        <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                                    ) : (
+                                        <>
+                                            Choose Plan
+                                            <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
+                                        </>
+                                    )}
                                 </Button>
                             </CardFooter>
                         </Card>

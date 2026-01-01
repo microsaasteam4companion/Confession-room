@@ -269,7 +269,7 @@ export default function ChatRoomPage() {
   const warningClass = isWarning ? 'animate-pulse border-destructive/50 bg-destructive/5' : '';
 
   return (
-    <div className="h-screen w-full overflow-hidden flex relative">
+    <div className="h-screen w-full overflow-hidden flex relative bg-background">
       {showHearts && <HeartRain />}
 
       {/* Heartbeat Overlay */}
@@ -283,7 +283,7 @@ export default function ChatRoomPage() {
       {/* Expired Cliffhanger Overlay */}
       {isExpired && (
         <div className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-xl flex items-center justify-center p-4 animate-in fade-in duration-500">
-          <Card className="w-full max-w-md glass-card border-primary/50 text-center space-y-6 p-8">
+          <Card className="w-full max-w-md glass-card border-primary/50 text-center space-y-6 p-8 dark:bg-black/95 dark:border-white/10">
             <div className="w-20 h-20 rounded-full bg-destructive/10 flex items-center justify-center mx-auto mb-4 animate-pulse">
               <Clock className="w-10 h-10 text-destructive" />
             </div>
@@ -322,183 +322,183 @@ export default function ChatRoomPage() {
           </Card>
         </div>
       )}
-      {/* Background / Ad Area (WeTransfer Style) */}
-      <div className="absolute inset-0 z-0">
-        {/* Animated gradient background base */}
-        <div className="absolute inset-0 gradient-bg opacity-30" />
 
-        {/* Ad Placeholder Content - Hidden on Mobile */}
-        <div className="hidden lg:flex w-full h-full items-center justify-center lg:pl-[400px] xl:pl-[450px]">
-          <div className="max-w-2xl text-center space-y-6 opacity-30 pointer-events-none select-none">
-            <ImageIcon className="w-24 h-24 mx-auto text-primary/20" />
-            <h3 className="text-4xl font-bold gradient-text">Space for Aesthetic Visuals</h3>
-            <p className="text-xl text-muted-foreground">
-              (Ads, Art, or Affiliate Content goes here)
-            </p>
+      {/* Main Layout Container */}
+      <div className="flex w-full h-full relative z-10">
+
+        {/* LEFT AD GUTTER (Hidden on mobile) */}
+        <div className="hidden xl:flex flex-1 items-center justify-center border-r border-white/5 bg-black/20 p-4">
+          <div className="text-center opacity-30 select-none">
+            <ImageIcon className="w-12 h-12 mx-auto mb-2 text-white/20" />
+            <p className="text-sm font-mono tracking-widest uppercase text-white/40">Ad Space Left</p>
           </div>
-
-          {/* Floating decorative elements */}
-          <div className="absolute top-20 right-20 w-96 h-96 bg-primary/10 rounded-full blur-3xl float" />
-          <div className="absolute bottom-20 left-[500px] w-72 h-72 bg-purple-500/10 rounded-full blur-3xl float-delayed" />
         </div>
 
-        {/* Red tint on expiry warning */}
-        <div className={cn(
-          "absolute inset-0 transition-colors duration-1000 pointer-events-none",
-          isWarning ? "bg-red-900/10 mix-blend-overlay" : ""
-        )} />
-      </div>
+        {/* CENTER CHAT INTERFACE */}
+        <div className="w-full md:max-w-3xl lg:max-w-4xl h-full flex flex-col shadow-2xl relative">
+          {/* Chat Card Container */}
+          <div className="flex-1 flex flex-col w-full h-full glass-card border-x border-white/10 dark:bg-black dark:border-white/10 transition-colors duration-300">
 
-      {/* Chat Interface - Side Panel */}
-      <div className="relative z-10 w-full lg:w-[400px] xl:w-[450px] h-full flex flex-col glass-card border-r border-white/10 shadow-2xl backdrop-blur-xl">
-        {/* Timer Header */}
-        <header className={cn("border-b border-border/50 bg-background/40 backdrop-blur-md p-3 md:p-4 transition-colors", warningClass)}>
-          <div className="space-y-3 md:space-y-4">
-            <div className="flex justify-between items-center">
-              <div>
-                <h1 className="text-lg md:text-xl font-bold gradient-text neon-glow flex items-center gap-2">
-                  <Sparkles className="w-3.5 h-3.5 md:w-4 md:h-4 text-primary" />
-                  {room.name}
-                </h1>
-                <p className="text-[10px] md:text-xs text-muted-foreground font-mono">CODE: {room.code}</p>
-              </div>
-              <div className={cn("flex flex-col items-end gap-1", timerColor)}>
-                <div className="flex items-center gap-2 text-xl md:text-2xl font-mono font-bold tracking-wider">
-                  <span>{String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}</span>
-                </div>
-                <div className="flex items-center gap-1 text-[10px] md:text-xs text-muted-foreground">
-                  <Users className="w-3 h-3" />
-                  <span>{participants.length} Active</span>
-                </div>
-              </div>
-            </div>
-            <Progress value={progress} className={cn("h-1 md:h-1.5", isWarning ? "bg-destructive/20 [&>div]:bg-destructive" : "")} />
-            {isWarning && (
-              <p className="text-xs text-destructive font-bold text-center animate-bounce">
-                ⚠️ Time is running out! Extend now!
-              </p>
-            )}
-          </div>
-        </header>
-
-        {/* Messages Scroll Area */}
-        <main className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent">
-          {messages.length === 0 ? (
-            <div className="h-full flex flex-col items-center justify-center text-center text-muted-foreground space-y-4 p-8">
-              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center float">
-                <Send className="w-8 h-8 text-primary/50" />
-              </div>
-              <p>No messages yet.<br />Break the silence!</p>
-            </div>
-          ) : (
-            messages.map((message) => {
-              const isOwnMessage = message.participant_id === participantId;
-              return (
-                <div
-                  key={message.id}
-                  className={cn(
-                    "flex flex-col gap-1 fade-in-up",
-                    isOwnMessage ? "items-end" : "items-start"
-                  )}
-                >
-                  <span className="text-[10px] text-muted-foreground px-1">
-                    {!isOwnMessage && (message.participant?.avatar_name || 'Anonymous')}
-                  </span>
-                  <div className={cn(
-                    "max-w-[90%] md:max-w-[85%] p-2.5 md:p-3 rounded-2xl text-sm relative transition-all duration-300 hover:scale-[1.02] group/msg",
-                    isOwnMessage
-                      ? "bg-primary text-primary-foreground rounded-br-sm shadow-lg shadow-primary/20"
-                      : "glass-card border-none bg-white/5 rounded-bl-sm"
-                  )}>
-                    <p className="break-words leading-relaxed">{message.content}</p>
-                    <div className="flex items-center justify-between mt-1 gap-2">
-                      <span className={cn(
-                        "text-[10px] opacity-70",
-                        isOwnMessage ? "text-primary-foreground/70" : "text-muted-foreground"
-                      )}>
-                        {new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                      </span>
-                      <div className="flex items-center gap-1">
-                        <button
-                          onClick={() => handleShareMoment(message)}
-                          className={cn(
-                            "p-1 rounded-full opacity-0 group-hover/msg:opacity-100 transition-opacity hover:bg-white/10",
-                            isOwnMessage ? "text-primary-foreground/50 hover:text-primary-foreground" : "text-muted-foreground/50 hover:text-primary"
-                          )}
-                          title="Share as Card"
-                        >
-                          <Share className="w-3 h-3" />
-                        </button>
-                        <button
-                          onClick={() => {
-                            toast({
-                              title: "Pinned to Global Wall! 🌌",
-                              description: "Your secret is now eligible for the public carousel.",
-                            });
-                          }}
-                          className={cn(
-                            "p-1 rounded-full opacity-0 group-hover/msg:opacity-100 transition-opacity hover:bg-white/10",
-                            isOwnMessage ? "text-primary-foreground/50 hover:text-primary-foreground" : "text-muted-foreground/50 hover:text-primary"
-                          )}
-                          title="Post to Public Wall"
-                        >
-                          <Sparkles className="w-3 h-3" />
-                        </button>
-                      </div>
+            {/* Timer Header */}
+            <header className={cn("border-b border-white/10 bg-white/50 dark:bg-black/50 backdrop-blur-md p-3 md:p-4 transition-colors", warningClass)}>
+              <div className="space-y-3 md:space-y-4">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h1 className="text-lg md:text-xl font-bold gradient-text neon-glow flex items-center gap-2">
+                      <Sparkles className="w-3.5 h-3.5 md:w-4 md:h-4 text-primary" />
+                      {room.name}
+                    </h1>
+                    <p className="text-[10px] md:text-xs text-muted-foreground font-mono">CODE: {room.code}</p>
+                  </div>
+                  <div className={cn("flex flex-col items-end gap-1", timerColor)}>
+                    <div className="flex items-center gap-2 text-xl md:text-2xl font-mono font-bold tracking-wider">
+                      <span>{String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-[10px] md:text-xs text-muted-foreground">
+                      <Users className="w-3 h-3" />
+                      <span>{participants.length} Active</span>
                     </div>
                   </div>
                 </div>
-              );
-            })
-          )}
-          <div ref={messagesEndRef} />
-        </main>
+                <Progress value={progress} className={cn("h-1 md:h-1.5", isWarning ? "bg-destructive/20 [&>div]:bg-destructive" : "")} />
+                {isWarning && (
+                  <p className="text-xs text-destructive font-bold text-center animate-bounce">
+                    ⚠️ Time is running out! Extend now!
+                  </p>
+                )}
+              </div>
+            </header>
 
-        {/* Floating Extend Button (visible when low time) */}
-        {timeRemaining < 300000 && (
-          <div className="absolute bottom-[88px] left-0 right-0 flex justify-center z-20 pointer-events-none">
-            <Button
-              onClick={handleExtendTime}
-              size="sm"
-              className={cn(
-                "rounded-full shadow-lg pointer-events-auto transition-all duration-300 hover:scale-110",
-                isWarning ? "bg-destructive hover:bg-destructive/90 animate-pulse" : "neon-glow"
+            {/* Messages Scroll Area */}
+            <main className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent">
+              {messages.length === 0 ? (
+                <div className="h-full flex flex-col items-center justify-center text-center text-muted-foreground space-y-4 p-8">
+                  <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center float">
+                    <Send className="w-8 h-8 text-primary/50" />
+                  </div>
+                  <p>No messages yet.<br />Break the silence!</p>
+                </div>
+              ) : (
+                messages.map((message) => {
+                  const isOwnMessage = message.participant_id === participantId;
+                  return (
+                    <div
+                      key={message.id}
+                      className={cn(
+                        "flex flex-col gap-1 fade-in-up",
+                        isOwnMessage ? "items-end" : "items-start"
+                      )}
+                    >
+                      <span className="text-[10px] text-muted-foreground px-1">
+                        {!isOwnMessage && (message.participant?.avatar_name || 'Anonymous')}
+                      </span>
+                      <div className={cn(
+                        "max-w-[85%] md:max-w-[75%] p-3 md:p-4 rounded-2xl text-base relative transition-all duration-300 hover:scale-[1.01] group/msg",
+                        isOwnMessage
+                          ? "bg-primary text-primary-foreground rounded-br-sm shadow-lg shadow-primary/20"
+                          : "bg-muted/50 dark:bg-white/5 border border-white/5 rounded-bl-sm"
+                      )}>
+                        <p className="break-words leading-relaxed">{message.content}</p>
+                        <div className="flex items-center justify-between mt-2 gap-3">
+                          <span className={cn(
+                            "text-[10px] opacity-70",
+                            isOwnMessage ? "text-primary-foreground/70" : "text-muted-foreground"
+                          )}>
+                            {new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </span>
+                          <div className="flex items-center gap-1">
+                            <button
+                              onClick={() => handleShareMoment(message)}
+                              className={cn(
+                                "p-1 rounded-full opacity-0 group-hover/msg:opacity-100 transition-opacity hover:bg-white/10",
+                                isOwnMessage ? "text-primary-foreground/50 hover:text-primary-foreground" : "text-muted-foreground/50 hover:text-primary"
+                              )}
+                              title="Share as Card"
+                            >
+                              <Share className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => {
+                                toast({
+                                  title: "Pinned!",
+                                  description: "Pinned to local memory.",
+                                });
+                              }}
+                              className={cn(
+                                "p-1 rounded-full opacity-0 group-hover/msg:opacity-100 transition-opacity hover:bg-white/10",
+                                isOwnMessage ? "text-primary-foreground/50 hover:text-primary-foreground" : "text-muted-foreground/50 hover:text-primary"
+                              )}
+                              title="Pin"
+                            >
+                              <Sparkles className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })
               )}
-            >
-              <DollarSign className="w-4 h-4 mr-1" />
-              Extend (+{isWarning ? '1 min' : '5 mins'})
-            </Button>
-          </div>
-        )}
+              <div ref={messagesEndRef} />
+            </main>
 
-        {/* Input Footer */}
-        <div className="p-3 md:p-4 border-t border-border bg-background/80 backdrop-blur-lg flex flex-col gap-3">
-          <TruthOrDareBot
-            onSend={(msg) => handleSendMessage(undefined, msg)}
-            messages={messages}
-          />
-          <form onSubmit={handleSendMessage} className="flex gap-2 w-full">
-            <Input
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              placeholder={
-                room.status === 'active'
-                  ? "Type message..."
-                  : "Expired"
-              }
-              disabled={room.status === 'expired'}
-              className="flex-1 h-10 bg-white/5 border-white/10"
-            />
-            <Button
-              type="submit"
-              size="icon"
-              className="h-10 w-10 shrink-0 shadow-lg shadow-primary/20"
-              disabled={!newMessage.trim() || room.status === 'expired'}
-            >
-              <Send className="w-5 h-5" />
-            </Button>
-          </form>
+            {/* Floating Extend Button */}
+            {timeRemaining < 300000 && (
+              <div className="absolute bottom-[90px] left-0 right-0 flex justify-center z-20 pointer-events-none">
+                <Button
+                  onClick={handleExtendTime}
+                  size="sm"
+                  className={cn(
+                    "rounded-full shadow-lg pointer-events-auto transition-all duration-300 hover:scale-110",
+                    isWarning ? "bg-destructive hover:bg-destructive/90 animate-pulse" : "neon-glow"
+                  )}
+                >
+                  <DollarSign className="w-4 h-4 mr-1" />
+                  Extend (+{isWarning ? '1 min' : '5 mins'})
+                </Button>
+              </div>
+            )}
+
+            {/* Input Footer */}
+            <div className="p-3 md:p-4 border-t border-white/10 bg-background/80 dark:bg-black/80 backdrop-blur-lg flex flex-col gap-3">
+              <TruthOrDareBot
+                onSend={(msg) => handleSendMessage(undefined, msg)}
+                messages={messages}
+              />
+              <form onSubmit={handleSendMessage} className="flex gap-3 w-full max-w-4xl mx-auto">
+                <Input
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  placeholder={
+                    room.status === 'active'
+                      ? "Type a message..."
+                      : "Expired"
+                  }
+                  disabled={room.status === 'expired'}
+                  className="flex-1 h-12 bg-muted/50 dark:bg-white/5 border-transparent focus:border-primary/50 text-base"
+                />
+                <Button
+                  type="submit"
+                  size="icon"
+                  className="h-12 w-12 shrink-0 shadow-lg shadow-primary/20 rounded-xl"
+                  disabled={!newMessage.trim() || room.status === 'expired'}
+                >
+                  <Send className="w-5 h-5" />
+                </Button>
+              </form>
+            </div>
+
+          </div>
         </div>
+
+        {/* RIGHT AD GUTTER (Hidden on mobile) */}
+        <div className="hidden xl:flex flex-1 items-center justify-center border-l border-white/5 bg-black/20 p-4">
+          <div className="text-center opacity-30 select-none">
+            <ImageIcon className="w-12 h-12 mx-auto mb-2 text-white/20" />
+            <p className="text-sm font-mono tracking-widest uppercase text-white/40">Ad Space Right</p>
+          </div>
+        </div>
+
       </div>
     </div>
   );

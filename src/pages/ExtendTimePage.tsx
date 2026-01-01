@@ -18,7 +18,7 @@ export default function ExtendTimePage() {
   const { roomId } = useParams<{ roomId: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
-  
+
   const [room, setRoom] = useState<Room | null>(null);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
@@ -36,7 +36,7 @@ export default function ExtendTimePage() {
     try {
       setLoading(true);
       const roomData = await roomApi.getRoomById(roomId!);
-      
+
       if (!roomData || roomData.status !== 'active') {
         toast({
           title: 'Room Not Found',
@@ -130,7 +130,7 @@ export default function ExtendTimePage() {
           Back to Chat
         </Button>
 
-        <Card className="glass-card">
+        <Card className="glass-card dark:bg-black dark:border-white/10 transition-colors duration-300">
           <CardHeader>
             <CardTitle className="text-3xl gradient-text flex items-center gap-2">
               <Clock className="w-8 h-8" />
@@ -141,7 +141,7 @@ export default function ExtendTimePage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="text-center p-4 bg-muted rounded-lg">
+            <div className="text-center p-4 bg-muted dark:bg-black/50 rounded-lg border border-white/5">
               <p className="text-sm text-muted-foreground mb-1">Time Remaining</p>
               <p className="text-3xl font-bold text-primary">{minutesRemaining} minutes</p>
             </div>
@@ -149,7 +149,7 @@ export default function ExtendTimePage() {
             <div className="space-y-3">
               <h3 className="font-semibold text-lg">Choose Extension</h3>
               {TIME_EXTENSION_OPTIONS.map((option) => (
-                <Card key={option.minutes} className="glass-card hover:border-primary/50 transition-colors">
+                <Card key={option.minutes} className="glass-card dark:bg-black/80 dark:border-white/10 hover:border-primary/50 transition-colors">
                   <CardContent className="p-4">
                     <div className="flex justify-between items-center">
                       <div>

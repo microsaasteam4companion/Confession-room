@@ -18,32 +18,32 @@ Cyberpunk-Minimalist Theme with Dark Mode Default
     --card-foreground: 0 0% 4%;
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 4%;
-    --primary: 282 100% 54%;
+    --primary: 337 100% 58%; /* Magenta */
     --primary-foreground: 0 0% 100%;
     --secondary: 240 5% 84%;
     --secondary-foreground: 0 0% 4%;
     --muted: 240 5% 96%;
     --muted-foreground: 240 4% 46%;
-    --accent: 282 100% 96%;
-    --accent-foreground: 282 100% 54%;
+    --accent: 337 100% 96%;
+    --accent-foreground: 337 100% 58%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
     --border: 240 6% 90%;
     --input: 240 6% 90%;
-    --ring: 282 100% 54%;
-    --chart-1: 282 100% 54%;
+    --ring: 337 100% 58%;
+    --chart-1: 337 100% 58%;
     --chart-2: 173 58% 39%;
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 0 0% 4%;
-    --sidebar-primary: 282 100% 54%;
+    --sidebar-primary: 337 100% 58%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 240 5% 96%;
     --sidebar-accent-foreground: 0 0% 4%;
     --sidebar-border: 240 6% 90%;
-    --sidebar-ring: 282 100% 54%;
+    --sidebar-ring: 337 100% 58%;
     
     /* Timer states */
     --timer-safe: 142 76% 36%;
@@ -56,39 +56,39 @@ Cyberpunk-Minimalist Theme with Dark Mode Default
   }
 
   .dark {
-    /* Cyberpunk Dark Theme - Deep Black with Neon Purple */
-    --background: 0 0% 4%;
+    /* Cyberpunk Dark Theme - Deep Black with Magenta */
+    --background: 0 0% 0%; /* Pure Black */
     --foreground: 0 0% 98%;
-    --card: 0 0% 6%;
+    --card: 0 0% 4%;
     --card-foreground: 0 0% 98%;
-    --popover: 0 0% 6%;
+    --popover: 0 0% 4%;
     --popover-foreground: 0 0% 98%;
-    --primary: 282 100% 54%;
+    --primary: 337 100% 58%; /* Magenta */
     --primary-foreground: 0 0% 100%;
     --secondary: 240 5% 16%;
     --secondary-foreground: 0 0% 98%;
-    --muted: 240 5% 12%;
+    --muted: 240 5% 8%;
     --muted-foreground: 240 5% 65%;
-    --accent: 282 100% 12%;
-    --accent-foreground: 282 100% 54%;
+    --accent: 337 100% 12%;
+    --accent-foreground: 337 100% 58%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 240 5% 16%;
-    --input: 240 5% 16%;
-    --ring: 282 100% 54%;
-    --chart-1: 282 100% 54%;
+    --border: 240 5% 12%;
+    --input: 240 5% 12%;
+    --ring: 337 100% 58%;
+    --chart-1: 337 100% 58%;
     --chart-2: 173 58% 39%;
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
-    --sidebar-background: 0 0% 6%;
+    --sidebar-background: 0 0% 4%;
     --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 282 100% 54%;
+    --sidebar-primary: 337 100% 58%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 5% 12%;
+    --sidebar-accent: 240 5% 8%;
     --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 240 5% 16%;
-    --sidebar-ring: 282 100% 54%;
+    --sidebar-border: 240 5% 12%;
+    --sidebar-ring: 337 100% 58%;
     
     /* Timer states */
     --timer-safe: 142 76% 36%;
@@ -96,8 +96,8 @@ Cyberpunk-Minimalist Theme with Dark Mode Default
     --timer-danger: 0 84% 60%;
     
     /* Glass-morphic effect */
-    --glass-bg: 0 0% 100% / 0.05;
-    --glass-border: 0 0% 100% / 0.1;
+    --glass-bg: 0 0% 100% / 0.7;
+    --glass-border: 0 0% 0% / 0.05;
   }
 }
 
@@ -148,14 +148,54 @@ Cyberpunk-Minimalist Theme with Dark Mode Default
     animation: pulse-glow 4s ease-in-out infinite;
   }
   
+  /* Animated dot grid background */
+  .grid-bg {
+    background-image: radial-gradient(hsl(var(--primary) / 0.15) 1px, transparent 1px);
+    background-size: 30px 30px;
+    background-color: hsl(var(--background));
+  }
+
+  /* Wide Headline styling */
+  .wide-headline {
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    font-weight: 800;
+  }
+  
+  /* Feature tag */
+  .hot-tag {
+    background: hsl(var(--primary));
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 900;
+    padding: 0.2rem 1rem;
+    border-radius: 9999px;
+    text-transform: uppercase;
+    box-shadow: 0 0 15px hsl(var(--primary) / 0.5);
+  }
+
+  /* Pink Vote Badge */
+  .vote-badge {
+    background: #fce7f3;
+    color: #db2777;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    border: 1px solid #fbcfe8;
+  }
+
   /* Multi-color Gradient text */
   .gradient-text {
     background: linear-gradient(
       135deg,
-      hsl(282 100% 54%),
-      hsl(260 100% 65%),
-      hsl(310 100% 60%),
-      hsl(282 100% 70%)
+      hsl(337 100% 58%),
+      hsl(320 100% 60%),
+      hsl(350 100% 65%),
+      hsl(337 100% 75%)
     );
     background-size: 300% 300%;
     -webkit-background-clip: text;
@@ -206,6 +246,28 @@ Cyberpunk-Minimalist Theme with Dark Mode Default
   /* Floating animation */
   .float {
     animation: float 6s ease-in-out infinite;
+  }
+  
+  /* cycling-gradient text for Hero */
+  .cycling-gradient {
+    background: linear-gradient(
+      to right,
+      #9333ea, /* purple-600 */
+      #db2777, /* pink-600 */
+      #2563eb, /* blue-600 */
+      #9333ea
+    );
+    background-size: 300% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: cycle-colors 8s linear infinite;
+  }
+
+  @keyframes cycle-colors {
+    0% { background-position: 0% center; }
+    50% { background-position: 100% center; }
+    100% { background-position: 0% center; }
   }
   
   .float-delayed {

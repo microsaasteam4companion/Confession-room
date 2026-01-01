@@ -64,10 +64,10 @@ export default function CreateRoomPage() {
       return;
     }
 
-    // CHECK: First One Free Logic
-    const myRooms = JSON.parse(localStorage.getItem('my_rooms') || '[]');
-    if (myRooms.length > 0) {
-      // User has already created a room -> Enforce Payment
+    // CHECK: Duration Logic
+    // If duration > 10 minutes, enforce payment.
+    // If duration <= 10 minutes, allow Free Unlimited creation.
+    if (duration > 10) {
       await handlePaymentFlow();
       return;
     }
@@ -83,9 +83,12 @@ export default function CreateRoomPage() {
 
       setCreatedRoom({ code: newRoom.code, id: newRoom.id });
 
-      // Save to local storage
-      myRooms.push(newRoom.id);
-      localStorage.setItem('my_rooms', JSON.stringify(myRooms));
+      // Save to local storage (just for user history/access, not for limiting)
+      const myRooms = JSON.parse(localStorage.getItem('my_rooms') || '[]');
+      if (!myRooms.includes(newRoom.id)) {
+        myRooms.push(newRoom.id);
+        localStorage.setItem('my_rooms', JSON.stringify(myRooms));
+      }
 
       toast({ title: 'Success', description: 'Room created successfully!' });
     } catch (err) {
@@ -110,12 +113,12 @@ export default function CreateRoomPage() {
   const roomUrl = createdRoom ? `${window.location.origin}/join/${createdRoom.code}` : '';
 
   return (
-    <div className="min-h-screen p-4 flex items-center justify-center relative overflow-hidden">
+    <div className="min-h-screen p-4 flex items-center justify-center relative overflow-hidden bg-slate-50 dark:bg-black transition-colors duration-300">
       {/* Background blobs */}
       <div className="absolute top-20 left-20 w-72 h-72 bg-primary/10 rounded-full blur-3xl float" />
       <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl float-delayed" />
 
-      <Card className="glass-card w-full max-w-lg relative z-10 border-primary/20">
+      <Card className="glass-card w-full max-w-lg relative z-10 border-primary/20 dark:bg-black/90 dark:border-white/10">
         <CardHeader>
           <div className="flex items-center gap-2 mb-2">
             <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => navigate(-1)}>
@@ -192,7 +195,7 @@ export default function CreateRoomPage() {
       </Card>
 
       <Dialog open={!!createdRoom} onOpenChange={(open) => !open && setCreatedRoom(null)}>
-        <DialogContent className="bg-[hsl(var(--glass-bg))] backdrop-blur-xl border border-[hsl(var(--glass-border))] shadow-2xl sm:max-w-md">
+        <DialogContent className="bg-white/95 dark:bg-black/95 backdrop-blur-xl border border-white/20 dark:border-white/10 shadow-2xl sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="text-center text-2xl gradient-text">Room Ready!</DialogTitle>
             <DialogDescription className="text-center">

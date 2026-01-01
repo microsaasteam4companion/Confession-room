@@ -96,7 +96,7 @@ export default function AdminDashboard() {
             <div className="space-y-4">
               <h2 className="text-2xl font-bold">Active Rooms ({activeRooms.length})</h2>
               {activeRooms.length === 0 ? (
-                <Card className="glass-card">
+                <Card className="glass-card dark:bg-black dark:border-white/10">
                   <CardContent className="py-12 text-center text-muted-foreground">
                     <p>No active rooms. Create one to get started!</p>
                   </CardContent>
@@ -106,7 +106,7 @@ export default function AdminDashboard() {
                   {activeRooms.map((room) => {
                     const { minutes, seconds, expired } = getTimeRemaining(room.expires_at);
                     return (
-                      <Card key={room.id} className="glass-card">
+                      <Card key={room.id} className="glass-card dark:bg-black dark:border-white/10 transition-colors duration-300">
                         <CardHeader>
                           <div className="flex justify-between items-start">
                             <div>
@@ -166,7 +166,7 @@ export default function AdminDashboard() {
                 <h2 className="text-2xl font-bold">Expired Rooms ({expiredRooms.length})</h2>
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
                   {expiredRooms.map((room) => (
-                    <Card key={room.id} className="glass-card opacity-60">
+                    <Card key={room.id} className="glass-card dark:bg-black dark:border-white/10 opacity-60 transition-colors duration-300">
                       <CardHeader>
                         <div className="flex justify-between items-start">
                           <div>

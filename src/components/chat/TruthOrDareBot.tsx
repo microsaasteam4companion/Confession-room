@@ -81,7 +81,7 @@ export function TruthOrDareBot({ onSend, messages = [] }: TruthOrDareBotProps) {
         }
 
         const randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
-        const text = `🤖 BOT [${categoryName}]: ${randomPrompt}`;
+        const text = randomPrompt;
         onSend(text);
     };
 

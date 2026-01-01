@@ -115,7 +115,7 @@ export default function PublicWallPage() {
                             whileHover={{ scale: 1.02 }}
                             className={cn(
                                 "break-inside-avoid relative p-8 rounded-3xl border backdrop-blur-3xl transition-all cursor-default overflow-hidden group mb-6",
-                                "bg-white/40 dark:bg-white/5 border-white/20 dark:border-white/10",
+                                "bg-white/40 dark:bg-white/10 border-white/20 dark:border-white/20",
                                 item.border,
                                 "shadow-lg hover:shadow-2xl",
                                 item.glow
@@ -162,7 +162,7 @@ export default function PublicWallPage() {
 
                 {/* Action Bar */}
                 <div className="mt-20 text-center">
-                    <Card className="max-w-xl mx-auto glass-card p-10 space-y-6 border-primary/20">
+                    <Card className="max-w-xl mx-auto glass-card dark:bg-black/90 dark:border-white/20 p-10 space-y-6 border-primary/20 transition-colors duration-300">
                         <h3 className="text-2xl font-bold">Have your own secret?</h3>
                         <p className="text-muted-foreground">
                             Create a room, invite friends, and share your truth. Choose to make it public if you dare.

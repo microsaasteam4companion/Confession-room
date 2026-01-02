@@ -139,7 +139,25 @@ export default function LandingPage() {
 
       if (error) {
         console.error('Supabase Function Error:', error);
-        throw error;
+        // Extract the actual JSON error message from the backend if available
+        let detailedError = error.message;
+        try {
+          if (error.context) {
+            const body = await error.context.json();
+            if (body && body.error) {
+              detailedError = body.error;
+            }
+          }
+        } catch (e) {
+          // Fallback to text if JSON parsing fails
+          try {
+            const text = await error.context?.text();
+            if (text) detailedError = text;
+          } catch (textErr) {
+            // Ignore
+          }
+        }
+        throw new Error(detailedError);
       }
 
       if (!data?.url) throw new Error('No checkout URL returned from backend');

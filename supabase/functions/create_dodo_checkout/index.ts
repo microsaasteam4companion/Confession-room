@@ -34,8 +34,11 @@ Deno.serve(async (req) => {
 
         const { product_id, room_id, name, price, quantity, type, customer } = body;
 
-        if (!product_id || !room_id) {
-            throw new Error("Missing product_id or room_id");
+        if (!product_id) {
+            throw new Error("Missing product_id");
+        }
+        if (type !== 'create_room' && !room_id) {
+            throw new Error("Missing room_id for extension");
         }
 
         // 1. Create a pending order in Supabase
@@ -43,7 +46,7 @@ Deno.serve(async (req) => {
         const { data: order, error: orderError } = await supabase
             .from("orders")
             .insert({
-                room_id: room_id,
+                room_id: room_id || null,
                 items: [{ product_id, name, price, quantity }],
                 total_amount: price * quantity,
                 currency: "usd",
@@ -89,11 +92,20 @@ Deno.serve(async (req) => {
             }),
         });
 
-        const session = await response.json();
-        console.log(`[DodoCheckout] Dodo Response: ${response.status}`, session);
+        // Try to get response as text first to handle "Method Not Allowed" or HTML errors
+        const responseText = await response.text();
+        console.log(`[DodoCheckout] Dodo Raw Response (${response.status}):`, responseText);
+
+        let session;
+        try {
+            session = JSON.parse(responseText);
+        } catch (e) {
+            console.error("[DodoCheckout] Failed to parse Dodo response as JSON");
+            throw new Error(`Dodo API Error (${response.status}): ${responseText.substring(0, 100)}`);
+        }
 
         if (!response.ok) {
-            throw new Error(session.message || "Failed to create Dodo checkout session");
+            throw new Error(session.message || `Dodo API Error: ${response.status}`);
         }
 
         // 3. Update order with Dodo session ID

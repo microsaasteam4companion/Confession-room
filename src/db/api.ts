@@ -43,7 +43,7 @@ export const roomApi = {
     const { data: session, error } = await supabase.functions.invoke('create_dodo_checkout', {
       body: {
         product_id: data.product_id,
-        room_id: data.metadata?.room_id || 'new_room',
+        room_id: data.metadata?.room_id || null,
         name: data.name,
         price: data.price,
         quantity: data.quantity,

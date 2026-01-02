@@ -53,7 +53,37 @@ Deno.serve(async (req) => {
                 verified = true;
 
                 // 3. Fulfill the order (Extend time or Mark as Paid)
-                if (order.metadata?.type === "extend_time") {
+                if (order.metadata?.type === "create_room") {
+                    // Create new room
+                    const params = order.metadata.room_params;
+                    const initialDurationSec = (params.initial_duration || 600);
+                    const bonusMin = (order.metadata.duration_bonus || 0);
+                    const totalDurationMs = (initialDurationSec * 1000) + (bonusMin * 60 * 1000);
+
+                    const { data: newRoom, error: roomError } = await supabase
+                        .from('rooms')
+                        .insert({
+                            name: params.name || 'Anonymous Room',
+                            max_participants: params.max_participants || 10,
+                            initial_duration: initialDurationSec,
+                            expires_at: new Date(Date.now() + totalDurationMs).toISOString(),
+                            status: 'active'
+                        })
+                        .select()
+                        .single();
+
+                    if (roomError) {
+                        console.error("Failed to create room:", roomError);
+                        throw roomError;
+                    }
+
+                    // Update order with new room_id
+                    await supabase.from('orders').update({ room_id: newRoom.id }).eq('id', order_id);
+
+                    // Return new room id so frontend can redirect
+                    order.new_room_id = newRoom.id;
+                }
+                else if (order.metadata?.type === "extend_time") {
                     const minutes = order.metadata.minutes || 0;
                     await supabase.rpc('extend_room_time', {
                         p_room_id: order.room_id,

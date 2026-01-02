@@ -24,42 +24,47 @@ export default function PaymentSuccessPage() {
   const [creatingRoom, setCreatingRoom] = useState(false);
 
   useEffect(() => {
-    const sessionId = searchParams.get('session_id');
+    const orderId = searchParams.get('order_id');
+    const paymentId = searchParams.get('payment_id');
+    const status = searchParams.get('status');
 
-    if (!sessionId) {
-      setError('No payment session found');
+    if (!orderId) {
+      setError('No order ID found in response');
       setVerifying(false);
       return;
     }
 
-    verifyPayment(sessionId);
+    if (status === 'failed') {
+      setError('Payment failed as reported by gateway');
+      setVerifying(false);
+      return;
+    }
+
+    verifyPayment(orderId, paymentId || '');
   }, [searchParams]);
 
-  const verifyPayment = async (sessionId: string) => {
+  const verifyPayment = async (orderId: string, paymentId: string) => {
     try {
       setVerifying(true);
 
-      const { data, error: invokeError } = await supabase.functions.invoke('verify_stripe_payment', {
-        body: JSON.stringify({ sessionId })
+      const { data, error: invokeError } = await supabase.functions.invoke('verify_dodo_payment', {
+        body: { order_id: orderId, payment_id: paymentId }
       });
 
       if (invokeError) throw new Error(invokeError.message);
 
-      if (data?.data?.verified) {
+      if (data?.verified) {
         setVerified(true);
+        const orderData = data.order;
+        setOrder(orderData);
 
         // Check if there is a pending room creation
         const pendingRoomJson = sessionStorage.getItem('pending_room_params');
         if (pendingRoomJson) {
           await handlePostPaymentRoomCreation(JSON.parse(pendingRoomJson));
-        } else {
-          // Normal Order Flow (e.g. extension)
-          const orderData = await orderApi.getOrderBySessionId(sessionId);
-          setOrder(orderData);
         }
-
       } else {
-        setError('Payment not verified. Please try again.');
+        setError('Payment verification pending or failed.');
       }
     } catch (err) {
       console.error('Payment verification failed:', err);
@@ -176,17 +181,22 @@ export default function PaymentSuccessPage() {
           ) : (
             <>
               {order && (
-                <div className="space-y-3 p-4 bg-muted rounded-lg">
+                <div className="space-y-3 p-4 bg-muted/50 dark:bg-black/50 rounded-lg border border-white/5">
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Amount:</span>
-                    <span className="font-bold">₹{order.total_amount.toFixed(2)}</span>
+                    <span className="font-bold text-foreground">${order.total_amount.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Status:</span>
-                    <span className="text-primary font-semibold">Completed</span>
+                    <span className="text-primary font-semibold uppercase tracking-tighter">Completed</span>
                   </div>
                 </div>
               )}
+              <div className="text-center">
+                <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest mt-2">
+                  Verified by Dodo Payments
+                </p>
+              </div>
               <div className="flex gap-2">
                 <Button variant="outline" className="flex-1" onClick={() => navigate('/')}>Home</Button>
                 {order && (

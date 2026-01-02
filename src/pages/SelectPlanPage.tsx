@@ -34,9 +34,11 @@ export default function SelectPlanPage() {
                 price: plan.priceValue,
                 quantity: 1,
                 type: 'create_room',
+                product_id: plan.dodoProductId, // Link to Dodo Header: Mapping ID.
                 metadata: {
                     plan_id: plan.id,
-                    duration_bonus: plan.durationBonus
+                    duration_bonus: plan.durationBonus,
+                    room_params: roomParams
                 }
             });
 
@@ -59,7 +61,8 @@ export default function SelectPlanPage() {
             id: 'executive',
             name: 'EXECUTIVE',
             price: '$1.99',
-            priceValue: 169, // Approx value in INR or keep as is if using USD
+            priceValue: 1.99,
+            dodoProductId: 'pdt_0NVOHazP6EyvlJEPTCSgK',
             duration: '25m Node Lifespan',
             features: [
                 'Priority Link',
@@ -70,13 +73,14 @@ export default function SelectPlanPage() {
             hot: true
         },
         {
-            id: 'pro',
-            name: 'PRO NODE',
-            price: '$4.99',
-            priceValue: 420,
-            duration: '50m Node Lifespan',
+            id: 'premium',
+            name: 'PREMIUM NODE',
+            price: '$3.99',
+            priceValue: 3.99,
+            dodoProductId: 'pdt_0NVOHiAPdhK7HTAUzKK2E',
+            duration: '60m Node Lifespan',
             features: [
-                'Double Duration',
+                'Maximum Duration',
                 'Room Styling',
                 'Dedicated Help'
             ],

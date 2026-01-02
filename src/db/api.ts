@@ -31,29 +31,28 @@ export const roomApi = {
     return room as Room;
   },
 
-  // Initiate Stripe Payment Session
+  // Initiate Dodo Payments Session
   async createPaymentSession(data: {
     name: string;
     price: number;
     quantity: number;
     type: 'create_room' | 'extend_time';
     metadata?: any;
+    product_id: string; // Dynamic mapping for Dodo Header: Using product_id.
   }) {
-    // Note: Assuming create_stripe_checkout handles this struct
-    const { data: session, error } = await supabase.functions.invoke('create_stripe_checkout', {
-      body: JSON.stringify({
-        items: [{
-          name: data.name,
-          price: data.price,
-          quantity: data.quantity
-        }],
-        payment_type: data.type,
-        metadata: data.metadata,
-        currency: 'inr'
-      })
+    const { data: session, error } = await supabase.functions.invoke('create_dodo_checkout', {
+      body: {
+        product_id: data.product_id,
+        room_id: data.metadata?.room_id || 'new_room',
+        name: data.name,
+        price: data.price,
+        quantity: data.quantity,
+        type: data.type,
+        customer: data.metadata?.customer
+      }
     });
 
-    return { data: session, error };
+    return { data: session, error: error }; // Returning session data Header: Fixing return value.
   },
 
   // Generate unique room code

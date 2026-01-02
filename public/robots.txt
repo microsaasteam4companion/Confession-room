@@ -1,0 +1,16 @@
+# https://www.robotstxt.org/robotstxt.html
+
+User-agent: *
+Allow: /
+Allow: /wall
+
+# Disallow private and dynamic sections
+Disallow: /admin/
+Disallow: /room/
+Disallow: /join/
+Disallow: /select-plan
+Disallow: /extend/
+Disallow: /payment-success
+
+# Sitemaps
+Sitemap: https://confessions-chi.vercel.app/sitemap.xml

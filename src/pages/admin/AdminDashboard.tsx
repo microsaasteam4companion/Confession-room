@@ -184,15 +184,14 @@ export default function AdminDashboard() {
                         </p>
                         <div className="flex gap-2">
                           <Button
-                            variant="outline"
-                            className="flex-1"
+                            variant="secondary"
+                            className="flex-1 bg-primary/10 hover:bg-primary/20 text-primary border-primary/20 hover:border-primary transition-all duration-300"
                             onClick={() => {
-                              // Reuse: Navigate to create with same name
-                              navigate(`/admin/create-room?name=${encodeURIComponent(room.name)}`);
+                              navigate(`/extend/${room.id}`);
                             }}
                           >
                             <RefreshCw className="w-4 h-4 mr-2" />
-                            Reuse
+                            Pay to Re-open
                           </Button>
                           <Button
                             variant="destructive"

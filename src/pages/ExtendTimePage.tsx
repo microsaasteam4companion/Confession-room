@@ -8,10 +8,10 @@ import { Loader2, Clock, ArrowLeft, CreditCard } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import type { Room, TimeExtensionOption } from '@/types';
 
-const TIME_EXTENSION_OPTIONS: TimeExtensionOption[] = [
-  { minutes: 5, price: 10, label: '5 Minutes' },
-  { minutes: 15, price: 29, label: '15 Minutes' },
-  { minutes: 60, price: 99, label: '1 Hour' }
+const TIME_EXTENSION_OPTIONS = [
+  { minutes: 15, price: 0.99, label: '15 Minutes', dodoProductId: 'pdt_0NVOHP937hNKmy8IC4uPw' },
+  { minutes: 30, price: 1.99, label: '30 Minutes', dodoProductId: 'pdt_0NVOHazP6EyvlJEPTCSgK' },
+  { minutes: 60, price: 3.99, label: '1 Hour', dodoProductId: 'pdt_0NVOHiAPdhK7HTAUzKK2E' }
 ];
 
 export default function ExtendTimePage() {
@@ -37,10 +37,10 @@ export default function ExtendTimePage() {
       setLoading(true);
       const roomData = await roomApi.getRoomById(roomId!);
 
-      if (!roomData || roomData.status !== 'active') {
+      if (!roomData) {
         toast({
           title: 'Room Not Found',
-          description: 'This room has expired or been deleted',
+          description: 'This room has been deleted',
           variant: 'destructive'
         });
         navigate('/');
@@ -67,19 +67,16 @@ export default function ExtendTimePage() {
     try {
       setProcessing(true);
 
-      const { data, error } = await supabase.functions.invoke('create_stripe_checkout', {
-        body: JSON.stringify({
+      const { data, error } = await roomApi.createPaymentSession({
+        name: `Extend Room: ${option.label}`,
+        price: option.price,
+        quantity: 1,
+        type: 'extend_time',
+        product_id: (option as any).dodoProductId,
+        metadata: {
           room_id: roomId,
-          items: [
-            {
-              name: `Extend time: ${option.label}`,
-              price: option.price,
-              quantity: 1
-            }
-          ],
-          currency: 'inr',
-          payment_method_types: ['card']
-        })
+          minutes: option.minutes
+        }
       });
 
       if (error) {
@@ -136,7 +133,7 @@ export default function ExtendTimePage() {
               <Clock className="w-8 h-8" />
               Extend Time
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="dark:text-muted-foreground">
               Room: {room.name} • Code: {room.code}
             </CardDescription>
           </CardHeader>
@@ -159,7 +156,7 @@ export default function ExtendTimePage() {
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="text-2xl font-bold text-primary">₹{option.price}</p>
+                        <p className="text-2xl font-bold text-primary">${option.price}</p>
                         <Button
                           onClick={() => handleExtendTime(option)}
                           disabled={processing}
@@ -182,7 +179,7 @@ export default function ExtendTimePage() {
             </div>
 
             <div className="text-xs text-muted-foreground text-center space-y-1">
-              <p>• Secure payment powered by Stripe</p>
+              <p>• Secure payment powered by Dodo Payments</p>
               <p>• Time will be added immediately after payment</p>
               <p>• All transactions are encrypted and secure</p>
             </div>

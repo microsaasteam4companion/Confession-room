@@ -19,7 +19,7 @@ export default function CreateRoomPage() {
 
   const [roomName, setRoomName] = useState('');
   const [maxParticipants, setMaxParticipants] = useState(10);
-  const [duration, setDuration] = useState(10); // minutes
+  const [duration, setDuration] = useState(5); // minutes Header: Ensuring 5m default.
   const [isLoading, setIsLoading] = useState(false);
   const [createdRoom, setCreatedRoom] = useState<{ code: string; id: string } | null>(null);
 
@@ -65,9 +65,9 @@ export default function CreateRoomPage() {
     }
 
     // CHECK: Duration Logic
-    // If duration > 10 minutes, enforce payment.
-    // If duration <= 10 minutes, allow Free Unlimited creation.
-    if (duration > 10) {
+    // If duration > 5 minutes, enforce payment.
+    // If duration <= 5 minutes, allow Free Unlimited creation.
+    if (duration > 5) {
       await handlePaymentFlow();
       return;
     }
@@ -163,18 +163,22 @@ export default function CreateRoomPage() {
 
             <div className="space-y-4">
               <div className="flex justify-between">
-                <Label>Initial Duration (Minutes)</Label>
+                <div>
+                  <Label>Initial Duration</Label>
+                  <p className="text-[10px] text-muted-foreground">Free limit: 5m • Buy more after creating</p>
+                </div>
                 <span className="text-sm font-mono text-primary">{duration}m</span>
               </div>
               <Slider
                 value={[duration]}
                 onValueChange={(vals) => setDuration(vals[0])}
                 min={5}
-                max={60}
+                max={5}
                 step={5}
-                className="py-4"
+                className="py-4 opacity-70"
                 disabled={isLoading}
               />
+              <p className="text-[10px] text-center text-primary/80 font-medium">To keep rooms anonymous & safe, free sessions are limited to 5m.</p>
             </div>
 
             <Button type="submit" className="w-full btn-shimmer group" size="lg" disabled={isLoading}>

@@ -28,6 +28,15 @@ import {
   Heart
 } from 'lucide-react';
 import { supabase } from '../db/supabase';
+import { roomApi } from '@/db/api';
+import { cn } from '@/lib/utils';
+
+// Helper for default room params
+const DEFAULT_ROOM_PARAMS = {
+  name: "Anonymous Room",
+  max_participants: 10,
+  initial_duration: 600 // 10 minutes
+};
 
 interface Secret {
   id: string; // UUID from DB
@@ -37,11 +46,11 @@ interface Secret {
   avatar: string;
   voted?: boolean; // Local state only
 }
-import { cn } from '@/lib/utils';
 
 export default function LandingPage() {
   const [roomCode, setRoomCode] = useState('');
   const [darkMode, setDarkMode] = useState(true);
+  const [loadingPayment, setLoadingPayment] = useState<string | null>(null);
   const navigate = useNavigate();
 
   // Initialize dark mode on component mount
@@ -55,18 +64,133 @@ export default function LandingPage() {
     }
   }, []);
 
+  // State to track secrets from DB
+  const [localSecrets, setLocalSecrets] = useState<Secret[]>([]);
+
+  // Fetch secrets on mount
+  useEffect(() => {
+    fetchSecrets();
+  }, []);
+
+  const fetchSecrets = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('secrets')
+        .select('*')
+        .order('votes', { ascending: false });
+
+      if (error) throw error;
+
+      if (data && data.length > 0) {
+        setLocalSecrets((data as any[]).map(s => ({
+          id: s.id,
+          text: s.content,
+          ghostId: s.ghost_id,
+          votes: s.votes,
+          avatar: s.avatar,
+          voted: false
+        })));
+      } else {
+        seedSecrets();
+      }
+    } catch (err) {
+      console.error('Error fetching secrets:', err);
+    }
+  };
+
+  const seedSecrets = async () => {
+    const initialSecrets = [
+      { content: "I actually sent an anonymous text to my ex just to see if they'd reply. They didn't.", ghost_id: "GHOST-42", votes: 421, avatar: "👻" },
+      { content: "I've been 'mentally dating' my co-worker for two years. He has no idea I exist outside of meetings.", ghost_id: "GHOST-43", votes: 892, avatar: "🦊" },
+      { content: "I once faked a flat tire just so I wouldn't have to go to a boring family dinner. I stayed in bed eating pizza.", ghost_id: "GHOST-44", votes: 154, avatar: "🐱" },
+      { content: "I still have my high school crush's middle school yearbook. I look at it every time I'm drunk.", ghost_id: "GHOST-45", votes: 632, avatar: "🐼" },
+      { content: "I tell everyone I'm a vegetarian but I secretly eat bacon in my car when no one is looking.", ghost_id: "GHOST-46", votes: 219, avatar: "🦁" },
+      { content: "I let my neighbor's dog into my house for snacks because my own cat is a jerk and won't cuddle.", ghost_id: "GHOST-47", votes: 98, avatar: "🐨" },
+      { content: "I've been using my roommate's Netflix account for three years. I'm 'Guest 2'. They think it's a glitch.", ghost_id: "GHOST-48", votes: 443, avatar: "🐰" }
+    ];
+
+    const { error } = await supabase.from('secrets').insert(initialSecrets);
+    if (!error) {
+      fetchSecrets();
+    }
+  };
+
+  const handleInitializeBilling = async (plan: any) => {
+    if (plan.price === '₹0') {
+      navigate('/admin/create-room');
+      return;
+    }
+
+    try {
+      setLoadingPayment(plan.name);
+
+      const { data, error } = await roomApi.createPaymentSession({
+        name: `New Room: ${plan.name}`,
+        price: Number(plan.price.replace('$', '')),
+        quantity: 1,
+        type: 'create_room',
+        product_id: plan.dodoProductId,
+        metadata: {
+          plan_id: plan.name.toLowerCase(),
+          duration_bonus: plan.durationBonus,
+          room_params: DEFAULT_ROOM_PARAMS
+        }
+      });
+
+      if (error) {
+        console.error('Supabase Function Error:', error);
+        throw error;
+      }
+
+      if (!data?.url) throw new Error('No checkout URL returned from backend');
+
+      window.location.href = data.url;
+    } catch (err) {
+      console.error('Payment Error:', err);
+      // You might want to import useToast to show error
+      const errorMessage = err instanceof Error ? err.message : JSON.stringify(err);
+      alert(`Payment Setup Failed: ${errorMessage}`);
+    } finally {
+      setLoadingPayment(null);
+    }
+  };
+
   const handleJoinRoom = () => {
     if (roomCode.trim()) {
       navigate(`/join/${roomCode.toUpperCase()}`);
     }
   };
 
-  const handleCreateRoom = () => {
-    navigate('/admin/create-room');
-  };
+  const handleUpvote = async (id: string) => {
+    setLocalSecrets(prev => prev.map(s => {
+      if (s.id === id) {
+        return { ...s, votes: s.voted ? s.votes - 1 : s.votes + 1, voted: !s.voted };
+      }
+      return s;
+    }));
 
-  const handleAdminDashboard = () => {
-    navigate('/admin');
+    const secret = localSecrets.find(s => s.id === id);
+    if (!secret) return;
+
+    const increment = !secret.voted ? 1 : -1;
+
+    try {
+      const { error } = await supabase.rpc('increment_secret_vote', {
+        row_id: id,
+        inc: increment
+      });
+
+      if (error) {
+        const { error: updateError } = await supabase
+          .from('secrets')
+          .update({ votes: secret.votes + increment })
+          .eq('id', id);
+
+        if (updateError) console.error("Update failed", updateError);
+      }
+    } catch (err) {
+      console.error("Vote persistence failed", err);
+    }
   };
 
   const toggleDarkMode = () => {
@@ -143,8 +267,8 @@ export default function LandingPage() {
   const pricingPlans = [
     {
       name: 'Free Access',
-      price: '$0',
-      duration: '10 Minutes / Room',
+      price: '₹0',
+      duration: '5 Minutes / Room',
       features: ['Full Anonymity', 'Random Avatars', 'Real-time Chat'],
       popular: false
     },
@@ -152,14 +276,18 @@ export default function LandingPage() {
       name: 'Standard',
       price: '$0.99',
       duration: '+15 minutes',
+      durationBonus: 15,
+      dodoProductId: 'pdt_0NVOHP937hNKmy8IC4uPw',
       features: ['All free features', 'Extended chat time', 'Better value', 'Multiple extensions', 'Priority support'],
       popular: true,
-      hot: false // "Most Popular" is usually what 'popular' flag triggers
+      hot: false
     },
     {
       name: 'Pro',
       price: '$1.99',
       duration: '+30 minutes',
+      durationBonus: 30,
+      dodoProductId: 'pdt_0NVOHazP6EyvlJEPTCSgK',
       features: ['All free features', 'Double extended time', 'Best for long talks', 'Crystal clear privacy', 'Dedicated help'],
       popular: false
     },
@@ -167,102 +295,12 @@ export default function LandingPage() {
       name: 'Premium',
       price: '$3.99',
       duration: '+1 hour',
+      durationBonus: 60,
+      dodoProductId: 'pdt_0NVOHiAPdhK7HTAUzKK2E',
       features: ['All free features', 'Maximum chat time', 'Best value per minute', 'Deep conversations', 'VIP experience'],
       popular: false
     }
   ];
-
-  // State to track secrets from DB
-  const [localSecrets, setLocalSecrets] = useState<Secret[]>([]);
-
-  // Fetch secrets on mount
-  useEffect(() => {
-    fetchSecrets();
-  }, []);
-
-  const fetchSecrets = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('secrets')
-        .select('*')
-        .order('votes', { ascending: false });
-
-      if (error) throw error;
-
-      if (data && data.length > 0) {
-        // Map DB structure to UI structure if needed (currently 1:1 matches mostly)
-        // Ensure we handle the 'voted' state locally (default false as we don't auth users yet)
-        setLocalSecrets((data as any[]).map(s => ({
-          id: s.id,
-          text: s.content, // Map content to text
-          ghostId: s.ghost_id, // Map ghost_id to ghostId
-          votes: s.votes,
-          avatar: s.avatar,
-          voted: false
-        })));
-      } else {
-        // If DB is empty, seed it (Onetime)
-        seedSecrets();
-      }
-    } catch (err) {
-      console.error('Error fetching secrets:', err);
-    }
-  };
-
-  const seedSecrets = async () => {
-    const initialSecrets = [
-      { content: "I actually sent an anonymous text to my ex just to see if they'd reply. They didn't.", ghost_id: "GHOST-42", votes: 421, avatar: "👻" },
-      { content: "I've been 'mentally dating' my co-worker for two years. He has no idea I exist outside of meetings.", ghost_id: "GHOST-43", votes: 892, avatar: "🦊" },
-      { content: "I once faked a flat tire just so I wouldn't have to go to a boring family dinner. I stayed in bed eating pizza.", ghost_id: "GHOST-44", votes: 154, avatar: "🐱" },
-      { content: "I still have my high school crush's middle school yearbook. I look at it every time I'm drunk.", ghost_id: "GHOST-45", votes: 632, avatar: "🐼" },
-      { content: "I tell everyone I'm a vegetarian but I secretly eat bacon in my car when no one is looking.", ghost_id: "GHOST-46", votes: 219, avatar: "🦁" },
-      { content: "I let my neighbor's dog into my house for snacks because my own cat is a jerk and won't cuddle.", ghost_id: "GHOST-47", votes: 98, avatar: "🐨" },
-      { content: "I've been using my roommate's Netflix account for three years. I'm 'Guest 2'. They think it's a glitch.", ghost_id: "GHOST-48", votes: 443, avatar: "🐰" }
-    ];
-
-    const { error } = await supabase.from('secrets').insert(initialSecrets);
-    if (!error) {
-      fetchSecrets(); // Reload after seed
-    }
-  };
-
-  const handleUpvote = async (id: string) => {
-    // Optimistic Update
-    setLocalSecrets(prev => prev.map(s => {
-      if (s.id === id) {
-        return { ...s, votes: s.voted ? s.votes - 1 : s.votes + 1, voted: !s.voted };
-      }
-      return s;
-    }));
-
-    // Find the secret to determine increment/decrement
-    const secret = localSecrets.find(s => s.id === id);
-    if (!secret) return;
-
-    const increment = !secret.voted ? 1 : -1;
-
-    // Persist to DB
-    // Note: This simple update is vulnerable to race conditions under high load, 
-    // but sufficient for this demo. Ideally use an RPC 'increment_vote' function.
-    try {
-      const { error } = await supabase.rpc('increment_secret_vote', {
-        row_id: id,
-        inc: increment
-      });
-
-      // Fallback if RPC doesn't exist (using direct update, less safe)
-      if (error) {
-        const { error: updateError } = await supabase
-          .from('secrets')
-          .update({ votes: secret.votes + increment })
-          .eq('id', id);
-
-        if (updateError) console.error("Update failed", updateError);
-      }
-    } catch (err) {
-      console.error("Vote persistence failed", err);
-    }
-  };
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-300">
@@ -425,7 +463,7 @@ export default function LandingPage() {
       </section>
 
       {/* Whisper Carousel - Refining with Blurred Gradient Aesthetics and Spicy Confessions */}
-      < section className="py-24 relative overflow-hidden bg-slate-50/50 dark:bg-black/40 border-y border-border/50 transition-colors" >
+      <section className="py-24 relative overflow-hidden bg-slate-50/50 dark:bg-black/40 border-y border-border/50 transition-colors">
         <div className="absolute top-1/2 left-1/4 w-[600px] h-[600px] bg-primary/10 dark:bg-primary/5 rounded-full blur-[150px] -z-10 animate-pulse" />
         <div className="absolute top-1/2 right-1/4 w-[600px] h-[600px] bg-purple-600/10 dark:bg-purple-600/5 rounded-full blur-[150px] -z-10 animate-pulse-delayed" />
 
@@ -524,10 +562,10 @@ export default function LandingPage() {
             <ArrowRight className="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1" />
           </Button>
         </div>
-      </section >
+      </section>
 
       {/* How It Works Section */}
-      < section id="how-it-works" className="py-20 xl:py-32" >
+      <section id="how-it-works" className="py-20 xl:py-32">
         <div className="container mx-auto px-4">
           <div className="text-center space-y-4 mb-16">
             <Badge variant="outline" className="text-sm px-4 py-1 border-primary/20">How It Works</Badge>
@@ -556,10 +594,10 @@ export default function LandingPage() {
             ))}
           </div>
         </div>
-      </section >
+      </section>
 
       {/* Pricing Section */}
-      < section id="pricing" className="py-32 grid-bg relative" >
+      <section id="pricing" className="py-32 grid-bg relative">
         <div className="container mx-auto px-4">
           <div className="text-center space-y-6 mb-24">
             <h3 className="text-5xl md:text-7xl wide-headline text-foreground">
@@ -615,8 +653,10 @@ export default function LandingPage() {
                           ? "bg-primary text-white hover:bg-primary/90 shadow-[0_10px_20px_rgba(255,0,128,0.3)] hover:translate-y-[-2px]"
                           : "bg-slate-100 text-slate-900 border border-slate-200 hover:bg-slate-200 dark:bg-white/5 dark:border-white/10 dark:text-white dark:hover:bg-white/10"
                       )}
+                      onClick={() => handleInitializeBilling(plan)}
+                      disabled={!!loadingPayment}
                     >
-                      INITIALIZE BILLING
+                      {loadingPayment === plan.name ? 'PROCESSING...' : 'INITIALIZE BILLING'}
                     </Button>
                   </CardFooter>
                 </Card>
@@ -624,10 +664,10 @@ export default function LandingPage() {
             ))}
           </div>
         </div>
-      </section >
+      </section>
 
       {/* Join Room Section */}
-      < section id="join" className="py-20 xl:py-32 relative overflow-hidden" >
+      <section id="join" className="py-20 xl:py-32 relative overflow-hidden">
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl mx-auto relative">
             <div className="absolute inset-0 bg-primary/20 blur-[120px] rounded-full opacity-30 animate-pulse" />
@@ -675,10 +715,10 @@ export default function LandingPage() {
             </Card>
           </div>
         </div>
-      </section >
+      </section>
 
       {/* Footer - Restored to simple original style */}
-      < footer className="border-t border-border py-12 bg-muted/30" >
+      <footer className="border-t border-border py-12 bg-muted/30">
         <div className="container mx-auto px-4 text-center">
           <div className="flex items-center justify-center gap-2 mb-6">
             <Sparkles className="w-6 h-6 text-primary" />
@@ -697,7 +737,7 @@ export default function LandingPage() {
             © 2025 Secret Room. All conversations are ephemeral and end-to-end encrypted.
           </p>
         </div>
-      </footer >
-    </div >
+      </footer>
+    </div>
   );
 }

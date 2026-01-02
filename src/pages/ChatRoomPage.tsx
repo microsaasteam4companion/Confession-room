@@ -8,7 +8,7 @@ import { TruthOrDareBot } from '@/components/chat/TruthOrDareBot';
 import { HeartRain } from '@/components/chat/HeartRain';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Loader2, Send, Clock, Users, DollarSign, Sparkles, Image as ImageIcon } from 'lucide-react';
+import { Loader2, Send, Clock, Users, DollarSign, Sparkles, Image as ImageIcon, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import type { Room, Message, RoomParticipant } from '@/types';
 import { cn } from '@/lib/utils';
@@ -306,7 +306,7 @@ export default function ChatRoomPage() {
                 onClick={handleExtendTime}
                 className="w-full h-12 text-lg btn-shimmer"
               >
-                Reveal & Re-open (₹10)
+                Reveal & Re-open ($0.99)
               </Button>
               <Button
                 variant="ghost"
@@ -320,8 +320,9 @@ export default function ChatRoomPage() {
               *Re-opening adds 5 minutes to this specific room history.
             </p>
           </Card>
-        </div>
-      )}
+        </div >
+      )
+      }
 
       {/* Main Layout Container */}
       <div className="flex w-full h-full relative z-10">
@@ -343,12 +344,24 @@ export default function ChatRoomPage() {
             <header className={cn("border-b border-white/10 bg-white/50 dark:bg-black/50 backdrop-blur-md p-3 md:p-4 transition-colors", warningClass)}>
               <div className="space-y-3 md:space-y-4">
                 <div className="flex justify-between items-center">
-                  <div>
-                    <h1 className="text-lg md:text-xl font-bold gradient-text neon-glow flex items-center gap-2">
-                      <Sparkles className="w-3.5 h-3.5 md:w-4 md:h-4 text-primary" />
-                      {room.name}
-                    </h1>
-                    <p className="text-[10px] md:text-xs text-muted-foreground font-mono">CODE: {room.code}</p>
+                  <div className="flex items-center gap-2 md:gap-3">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => navigate('/admin')}
+                      className="h-8 w-8 md:h-10 md:w-10 rounded-full hover:bg-primary/10 hover:text-primary transition-colors"
+                      title="Back to Dashboard"
+                    >
+                      <ArrowLeft className="w-5 h-5 md:w-6 md:h-6" />
+                    </Button>
+                    <div className="h-6 w-[1px] bg-white/10 mx-1" />
+                    <div>
+                      <h1 className="text-lg md:text-xl font-bold gradient-text neon-glow flex items-center gap-2">
+                        <Sparkles className="w-3.5 h-3.5 md:w-4 md:h-4 text-primary" />
+                        {room.name}
+                      </h1>
+                      <p className="text-[10px] md:text-xs text-muted-foreground font-mono">CODE: {room.code}</p>
+                    </div>
                   </div>
                   <div className={cn("flex flex-col items-end gap-1", timerColor)}>
                     <div className="flex items-center gap-2 text-xl md:text-2xl font-mono font-bold tracking-wider">
@@ -385,33 +398,33 @@ export default function ChatRoomPage() {
                     <div
                       key={message.id}
                       className={cn(
-                        "flex flex-col gap-1 fade-in-up",
-                        isOwnMessage ? "items-end" : "items-start"
+                        "flex flex-col gap-1 message-pop",
+                        isOwnMessage ? "items-end message-pop-right" : "items-start message-pop-left"
                       )}
                     >
                       <span className="text-[10px] text-muted-foreground px-1">
                         {!isOwnMessage && (message.participant?.avatar_name || 'Anonymous')}
                       </span>
                       <div className={cn(
-                        "max-w-[85%] md:max-w-[75%] p-3 md:p-4 rounded-2xl text-base relative transition-all duration-300 hover:scale-[1.01] group/msg",
+                        "max-w-[85%] md:max-w-[75%] py-2 px-3.5 rounded-[1.25rem] text-sm md:text-base relative transition-all duration-300 hover:scale-[1.01] group/msg shadow-sm",
                         isOwnMessage
-                          ? "bg-primary text-primary-foreground rounded-br-sm shadow-lg shadow-primary/20"
+                          ? "bg-primary text-primary-foreground rounded-br-sm shadow-primary/10"
                           : "bg-muted/50 dark:bg-white/5 border border-white/5 rounded-bl-sm"
                       )}>
-                        <p className="break-words leading-relaxed">{message.content}</p>
-                        <div className="flex items-center justify-between mt-2 gap-3">
+                        <p className="break-words leading-tight">{message.content}</p>
+                        <div className="flex items-center justify-between mt-1.5 gap-2">
                           <span className={cn(
-                            "text-[10px] opacity-70",
-                            isOwnMessage ? "text-primary-foreground/70" : "text-muted-foreground"
+                            "text-[9px] opacity-60 font-medium",
+                            isOwnMessage ? "text-primary-foreground/80" : "text-muted-foreground"
                           )}>
                             {new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                           </span>
-                          <div className="flex items-center gap-1">
+                          <div className="flex items-center gap-1 ml-auto">
                             <button
                               onClick={() => handleShareMoment(message)}
                               className={cn(
-                                "p-1 rounded-full opacity-0 group-hover/msg:opacity-100 transition-opacity hover:bg-white/10",
-                                isOwnMessage ? "text-primary-foreground/50 hover:text-primary-foreground" : "text-muted-foreground/50 hover:text-primary"
+                                "p-1 rounded-full transition-all duration-200 bg-white/10 hover:bg-white/20 active:scale-90",
+                                isOwnMessage ? "text-primary-foreground/70 hover:text-primary-foreground" : "text-muted-foreground/70 hover:text-primary"
                               )}
                               title="Share as Card"
                             >
@@ -425,8 +438,8 @@ export default function ChatRoomPage() {
                                 });
                               }}
                               className={cn(
-                                "p-1 rounded-full opacity-0 group-hover/msg:opacity-100 transition-opacity hover:bg-white/10",
-                                isOwnMessage ? "text-primary-foreground/50 hover:text-primary-foreground" : "text-muted-foreground/50 hover:text-primary"
+                                "p-1 rounded-full transition-all duration-200 bg-white/10 hover:bg-white/20 active:scale-90",
+                                isOwnMessage ? "text-primary-foreground/70 hover:text-primary-foreground" : "text-muted-foreground/70 hover:text-primary"
                               )}
                               title="Pin"
                             >
@@ -500,6 +513,6 @@ export default function ChatRoomPage() {
         </div>
 
       </div>
-    </div>
+    </div >
   );
 }

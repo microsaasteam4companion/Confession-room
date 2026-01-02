@@ -81,12 +81,13 @@ export default function ExtendTimePage() {
 
       if (error) {
         const errorMsg = await error?.context?.text();
-        console.error('Edge function error in create_stripe_checkout:', errorMsg || error?.message);
+        console.error('Edge function error in create_dodo_checkout:', errorMsg || error?.message);
         throw new Error(errorMsg || error.message);
       }
 
-      if (data?.data?.url) {
-        window.open(data.data.url, '_blank');
+      if (data?.url) {
+        // Use standard redirect instead of new tab for better mobile support
+        window.location.href = data.url;
       } else {
         throw new Error('No checkout URL received');
       }
@@ -94,7 +95,7 @@ export default function ExtendTimePage() {
       console.error('Failed to create checkout:', err);
       toast({
         title: 'Payment Error',
-        description: err instanceof Error ? err.message : 'Failed to initiate payment. Please ensure STRIPE_SECRET_KEY is configured.',
+        description: err instanceof Error ? err.message : 'Failed to initiate payment.',
         variant: 'destructive'
       });
     } finally {

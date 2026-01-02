@@ -306,15 +306,16 @@ export default function LandingPage() {
     <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-300">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 w-full border-b border-white/5 bg-white/80 dark:bg-black/80 backdrop-blur-xl transition-all duration-300">
-        <div className="w-full px-6 py-4">
+        <div className="w-full px-4 md:px-6 py-3 md:py-4">
           <div className="flex items-center justify-between relative">
-            <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
-              <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center border border-primary/20 group">
-                <span className="text-white font-black text-lg group-hover:scale-110 transition-transform">SR</span>
+            <div className="flex items-center gap-2 md:gap-3 cursor-pointer" onClick={() => navigate('/')}>
+              <div className="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-primary/20 flex items-center justify-center border border-primary/20 group">
+                <span className="text-white font-black text-sm md:text-lg group-hover:scale-110 transition-transform">SR</span>
               </div>
-              <h1 className="text-xl font-black tracking-tighter text-foreground dark:text-white">SECRETROOM</h1>
+              <h1 className="text-lg md:text-xl font-black tracking-tighter text-foreground dark:text-white">SECRETROOM</h1>
             </div>
 
+            {/* Desktop Nav - Hidden on Mobile */}
             <nav className="hidden xl:flex items-center gap-8 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
               <a href="#features" className="text-sm font-black uppercase hover:text-primary transition-colors">Features</a>
               <a href="#how-it-works" className="text-sm font-black uppercase hover:text-primary transition-colors">How It Works</a>
@@ -323,17 +324,22 @@ export default function LandingPage() {
               <a href="#join" className="text-sm font-black uppercase hover:text-primary transition-colors">Join Now</a>
             </nav>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 md:gap-4">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={toggleDarkMode}
-                className="w-10 h-10 p-0 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+                className="w-8 h-8 md:w-10 md:h-10 p-0 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
                 title={darkMode ? 'Light Mode' : 'Dark Mode'}
               >
-                {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                {darkMode ? <Sun className="w-4 h-4 md:w-5 md:h-5" /> : <Moon className="w-4 h-4 md:w-5 md:h-5" />}
               </Button>
-              <Button variant="default" size="lg" className="rounded-full font-black px-8 shadow-lg shadow-primary/20" onClick={() => navigate('/admin')}>
+              <Button
+                variant="default"
+                size="sm"
+                className="rounded-full font-black px-4 md:px-8 h-9 md:h-11 text-xs md:text-sm shadow-lg shadow-primary/20"
+                onClick={() => navigate('/admin')}
+              >
                 MY ROOMS
               </Button>
             </div>
@@ -342,13 +348,13 @@ export default function LandingPage() {
       </header>
 
       {/* Hero Section - Redesigned for Massive Impact */}
-      <section className="relative min-h-[90vh] flex flex-col items-center justify-center pt-40 pb-16 px-4 grid-bg overflow-hidden translate-y-[-5vh]">
+      <section className="relative min-h-[90vh] flex flex-col items-center justify-center pt-24 md:pt-40 pb-16 px-4 grid-bg overflow-hidden">
         <div className="container mx-auto max-w-7xl relative z-10 text-center">
           {/* Top Badge */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-6 py-2 rounded-full border border-pink-500/20 bg-pink-500/5 mb-12"
+            className="inline-flex items-center gap-2 px-4 py-1.5 md:px-6 md:py-2 rounded-full border border-pink-500/20 bg-pink-500/5 mb-8 md:mb-12"
           >
             <span className="text-[10px] md:text-xs font-black tracking-[0.2em] text-pink-500 uppercase flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-pink-500 animate-pulse" />
@@ -361,12 +367,12 @@ export default function LandingPage() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.1, duration: 0.8 }}
-            className="space-y-0 mb-12"
+            className="space-y-2 md:space-y-0 mb-8 md:mb-12"
           >
-            <h1 className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter text-slate-900 dark:text-white leading-[0.85] uppercase">
+            <h1 className="text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter text-slate-900 dark:text-white leading-[0.9] uppercase">
               Share Secrets.
             </h1>
-            <h1 className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-[0.85] uppercase cycling-gradient italic">
+            <h1 className="text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-[0.9] uppercase cycling-gradient italic">
               Leave No Trace.
             </h1>
           </motion.div>
@@ -376,9 +382,9 @@ export default function LandingPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
-            className="text-lg md:text-2xl text-slate-500 dark:text-slate-400 font-medium max-w-3xl mx-auto leading-relaxed mb-16 px-4"
+            className="text-base sm:text-lg md:text-2xl text-slate-500 dark:text-slate-400 font-medium max-w-3xl mx-auto leading-relaxed mb-10 md:mb-16 px-2"
           >
-            Time-limited anonymous chat nodes where words dissolve into the void. <span className="text-slate-900 dark:text-white font-bold">No signup. No history. Pure privacy.</span>
+            Time-limited anonymous chat nodes where words dissolve into the void. <span className="text-slate-900 dark:text-white font-bold block sm:inline mt-2 sm:mt-0">No signup. No history. Pure privacy.</span>
           </motion.p>
 
           {/* CTAs */}
@@ -386,12 +392,12 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-6"
+            className="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6 w-full sm:w-auto"
           >
             <Button
               size="lg"
               onClick={() => document.getElementById('join')?.scrollIntoView({ behavior: 'smooth' })}
-              className="h-16 px-12 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-lg hover:scale-105 transition-transform shadow-2xl"
+              className="w-full sm:w-auto h-14 md:h-16 px-8 md:px-12 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-base md:text-lg hover:scale-105 transition-transform shadow-2xl"
             >
               JOIN A ROOM NOW
             </Button>
@@ -399,7 +405,7 @@ export default function LandingPage() {
               variant="outline"
               size="lg"
               onClick={() => navigate('/admin/create-room')}
-              className="h-16 px-12 rounded-2xl border-2 border-slate-200 dark:border-white/10 font-bold text-lg hover:bg-slate-50 dark:hover:bg-white/5 transition-all"
+              className="w-full sm:w-auto h-14 md:h-16 px-8 md:px-12 rounded-2xl border-2 border-slate-200 dark:border-white/10 font-bold text-base md:text-lg hover:bg-slate-50 dark:hover:bg-white/5 transition-all"
             >
               CREATE A ROOM
             </Button>
@@ -407,7 +413,7 @@ export default function LandingPage() {
         </div>
 
         {/* Decorative elements */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 dark:bg-primary/10 rounded-full blur-[120px] -z-10 animate-pulse" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] sm:w-[500px] md:w-[800px] h-[300px] sm:h-[500px] md:h-[800px] bg-primary/5 dark:bg-primary/10 rounded-full blur-[60px] md:blur-[120px] -z-10 animate-pulse" />
       </section>
 
       {/* Features Section - Redesigned to 1+4 Grid */}

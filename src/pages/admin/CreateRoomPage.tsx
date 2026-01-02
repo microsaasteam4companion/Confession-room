@@ -118,19 +118,19 @@ export default function CreateRoomPage() {
       <div className="absolute top-20 left-20 w-72 h-72 bg-primary/10 rounded-full blur-3xl float" />
       <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl float-delayed" />
 
-      <Card className="glass-card w-full max-w-lg relative z-10 border-primary/20 dark:bg-black/90 dark:border-white/10">
-        <CardHeader>
+      <Card className="glass-card w-full max-w-lg relative z-10 border-primary/20 dark:bg-black/90 dark:border-white/10 mx-4">
+        <CardHeader className="px-5 md:px-6">
           <div className="flex items-center gap-2 mb-2">
             <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => navigate(-1)}>
               <ArrowLeft className="w-4 h-4" />
             </Button>
-            <CardTitle className="text-2xl gradient-text">Create Secret Room</CardTitle>
+            <CardTitle className="text-xl md:text-2xl gradient-text">Create Secret Room</CardTitle>
           </div>
-          <CardDescription>
+          <CardDescription className="text-sm md:text-base">
             Configure your anonymous room settings
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-5 md:px-6">
           <form onSubmit={handleCreateRoom} className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="roomName">Room Name</Label>
@@ -140,7 +140,7 @@ export default function CreateRoomPage() {
                 value={roomName}
                 onChange={(e) => setRoomName(e.target.value)}
                 required
-                className="bg-background/50"
+                className="bg-background/50 h-10 md:h-12 text-base"
                 disabled={isLoading}
               />
             </div>

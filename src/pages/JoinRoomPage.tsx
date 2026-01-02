@@ -124,39 +124,39 @@ export default function JoinRoomPage() {
       <div className="absolute top-20 left-20 w-72 h-72 bg-primary/10 rounded-full blur-3xl float" />
       <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl float-delayed" />
 
-      <Card className="w-full max-w-md glass-card relative z-10 glow-border animate-in zoom-in fade-in duration-500">
-        <CardHeader className="text-center pb-2">
-          <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4 mx-auto float">
-            <Sparkles className="w-8 h-8 text-primary" />
+      <Card className="w-full max-w-md glass-card relative z-10 glow-border animate-in zoom-in fade-in duration-500 mx-4">
+        <CardHeader className="text-center pb-2 px-4 md:px-6">
+          <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4 mx-auto float">
+            <Sparkles className="w-6 h-6 md:w-8 md:h-8 text-primary" />
           </div>
-          <CardTitle className="text-3xl gradient-text font-bold">
+          <CardTitle className="text-2xl md:text-3xl gradient-text font-bold">
             {room.name}
           </CardTitle>
-          <CardDescription className="text-base mt-2">
+          <CardDescription className="text-sm md:text-base mt-2">
             Invited to join secure room <br />
-            <span className="font-mono font-bold text-primary bg-primary/5 px-2 py-0.5 rounded border border-primary/20">
+            <span className="font-mono font-bold text-primary bg-primary/5 px-2 py-0.5 rounded border border-primary/20 inline-block mt-1">
               {room.code}
             </span>
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-8">
-          <div className="grid grid-cols-2 gap-4">
+        <CardContent className="space-y-6 md:space-y-8 px-4 md:px-6">
+          <div className="grid grid-cols-2 gap-3 md:gap-4">
             <div className="bg-white/5 p-3 rounded-xl text-center border border-white/10 hover:border-primary/30 transition-colors">
-              <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Duration</p>
-              <p className="text-xl font-bold font-mono">{minutesRemaining}m</p>
+              <p className="text-[10px] md:text-xs text-muted-foreground uppercase tracking-wider mb-1">Duration</p>
+              <p className="text-lg md:text-xl font-bold font-mono">{minutesRemaining}m</p>
             </div>
             <div className="bg-white/5 p-3 rounded-xl text-center border border-white/10 hover:border-primary/30 transition-colors">
-              <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Capacity</p>
-              <p className="text-xl font-bold font-mono">{room.max_participants}</p>
+              <p className="text-[10px] md:text-xs text-muted-foreground uppercase tracking-wider mb-1">Capacity</p>
+              <p className="text-lg md:text-xl font-bold font-mono">{room.max_participants}</p>
             </div>
           </div>
 
           <div className="space-y-3">
-            <div className="flex items-center gap-3 text-sm text-muted-foreground p-3 rounded-lg bg-primary/5 border border-primary/10">
+            <div className="flex items-center gap-3 text-xs md:text-sm text-muted-foreground p-3 rounded-lg bg-primary/5 border border-primary/10">
               <UserCircle className="w-5 h-5 text-primary shrink-0" />
               <p>You will be assigned a random <span className="text-primary font-semibold">Anonymous Avatar</span></p>
             </div>
-            <p className="text-xs text-center text-muted-foreground/60">
+            <p className="text-[10px] md:text-xs text-center text-muted-foreground/60">
               ⚠️ Chat history wipes automatically when timer ends
             </p>
           </div>

@@ -383,7 +383,7 @@ export default function ChatRoomPage() {
             </header>
 
             {/* Messages Scroll Area */}
-            <main className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent">
+            <main className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent pb-[140px] md:pb-6">
               {messages.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center text-center text-muted-foreground space-y-4 p-8">
                   <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center float">
@@ -473,12 +473,12 @@ export default function ChatRoomPage() {
             )}
 
             {/* Input Footer */}
-            <div className="p-3 md:p-4 border-t border-white/10 bg-background/80 dark:bg-black/80 backdrop-blur-lg flex flex-col gap-3">
+            <div className="fixed bottom-0 left-0 right-0 md:static p-3 md:p-4 border-t border-white/10 bg-background/80 dark:bg-black/90 backdrop-blur-lg flex flex-col gap-3 z-50 md:z-auto safe-area-pb">
               <TruthOrDareBot
                 onSend={(msg) => handleSendMessage(undefined, msg)}
                 messages={messages}
               />
-              <form onSubmit={handleSendMessage} className="flex gap-3 w-full max-w-4xl mx-auto">
+              <form onSubmit={handleSendMessage} className="flex gap-2 md:gap-3 w-full max-w-4xl mx-auto items-end">
                 <Input
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
@@ -488,15 +488,15 @@ export default function ChatRoomPage() {
                       : "Expired"
                   }
                   disabled={room.status === 'expired'}
-                  className="flex-1 h-12 bg-muted/50 dark:bg-white/5 border-transparent focus:border-primary/50 text-base"
+                  className="flex-1 h-10 md:h-12 bg-muted/50 dark:bg-white/5 border-transparent focus:border-primary/50 text-base rounded-2xl"
                 />
                 <Button
                   type="submit"
                   size="icon"
-                  className="h-12 w-12 shrink-0 shadow-lg shadow-primary/20 rounded-xl"
+                  className="h-10 w-10 md:h-12 md:w-12 shrink-0 shadow-lg shadow-primary/20 rounded-xl"
                   disabled={!newMessage.trim() || room.status === 'expired'}
                 >
-                  <Send className="w-5 h-5" />
+                  <Send className="w-4 h-4 md:w-5 md:h-5" />
                 </Button>
               </form>
             </div>

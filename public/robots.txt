@@ -13,4 +13,4 @@ Disallow: /extend/
 Disallow: /payment-success
 
 # Sitemaps
-Sitemap: https://confessions-chi.vercel.app/sitemap.xml
+Sitemap: https://secretroom.entrext.in/sitemap.xml

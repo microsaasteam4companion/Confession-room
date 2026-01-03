@@ -53,7 +53,9 @@ export default function LandingPage() {
   const [loadingPayment, setLoadingPayment] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  // Initialize dark mode on component mount
+  const [votedIds, setVotedIds] = useState<string[]>([]);
+
+  // Initialize dark mode and load upvotes on mount
   useEffect(() => {
     const isDark = localStorage.getItem('darkMode') !== 'false';
     setDarkMode(isDark);
@@ -62,22 +64,26 @@ export default function LandingPage() {
     } else {
       document.documentElement.classList.remove('dark');
     }
+
+    // Load upvote history
+    const savedVotes = JSON.parse(localStorage.getItem('secret_votes') || '[]');
+    setVotedIds(savedVotes);
+    fetchSecrets(savedVotes);
   }, []);
 
   // State to track secrets from DB
   const [localSecrets, setLocalSecrets] = useState<Secret[]>([]);
 
-  // Fetch secrets on mount
-  useEffect(() => {
-    fetchSecrets();
-  }, []);
+  // No longer need second redundant useEffect
 
-  const fetchSecrets = async () => {
+  const fetchSecrets = async (currentVotedIds?: string[]) => {
+    const activeVotedIds = currentVotedIds || votedIds;
     try {
       const { data, error } = await supabase
         .from('secrets')
         .select('*')
-        .order('votes', { ascending: false });
+        .order('votes', { ascending: false })
+        .limit(10);
 
       if (error) throw error;
 
@@ -88,7 +94,7 @@ export default function LandingPage() {
           ghostId: s.ghost_id,
           votes: s.votes,
           avatar: s.avatar,
-          voted: false
+          voted: activeVotedIds.includes(s.id)
         })));
       } else {
         seedSecrets();
@@ -106,7 +112,10 @@ export default function LandingPage() {
       { content: "I still have my high school crush's middle school yearbook. I look at it every time I'm drunk.", ghost_id: "GHOST-45", votes: 632, avatar: "🐼" },
       { content: "I tell everyone I'm a vegetarian but I secretly eat bacon in my car when no one is looking.", ghost_id: "GHOST-46", votes: 219, avatar: "🦁" },
       { content: "I let my neighbor's dog into my house for snacks because my own cat is a jerk and won't cuddle.", ghost_id: "GHOST-47", votes: 98, avatar: "🐨" },
-      { content: "I've been using my roommate's Netflix account for three years. I'm 'Guest 2'. They think it's a glitch.", ghost_id: "GHOST-48", votes: 443, avatar: "🐰" }
+      { content: "I've been using my roommate's Netflix account for three years. I'm 'Guest 2'. They think it's a glitch.", ghost_id: "GHOST-48", votes: 443, avatar: "🐰" },
+      { content: "I pretend to be on a phone call while walking in the street just to avoid talking to people I know.", ghost_id: "GHOST-49", votes: 567, avatar: "🦉" },
+      { content: "I have a secret stash of luxury chocolate hidden in an empty frozen peas bag in the freezer.", ghost_id: "GHOST-50", votes: 312, avatar: "🐹" },
+      { content: "I once accidentally liked my boss's photo from 2012 at 3 AM. I deleted my account for a whole week.", ghost_id: "GHOST-51", votes: 1204, avatar: "🐸" }
     ];
 
     const { error } = await supabase.from('secrets').insert(initialSecrets);
@@ -180,17 +189,25 @@ export default function LandingPage() {
   };
 
   const handleUpvote = async (id: string) => {
+    const isVoted = votedIds.includes(id);
+    const increment = isVoted ? -1 : 1;
+
     setLocalSecrets(prev => prev.map(s => {
       if (s.id === id) {
-        return { ...s, votes: s.voted ? s.votes - 1 : s.votes + 1, voted: !s.voted };
+        return { ...s, votes: s.votes + increment, voted: !isVoted };
       }
       return s;
     }));
 
-    const secret = localSecrets.find(s => s.id === id);
-    if (!secret) return;
-
-    const increment = !secret.voted ? 1 : -1;
+    // Persistence Logic
+    let newVotedIds;
+    if (isVoted) {
+      newVotedIds = votedIds.filter(vid => vid !== id);
+    } else {
+      newVotedIds = [...votedIds, id];
+    }
+    setVotedIds(newVotedIds);
+    localStorage.setItem('secret_votes', JSON.stringify(newVotedIds));
 
     try {
       const { error } = await supabase.rpc('increment_secret_vote', {
@@ -199,12 +216,8 @@ export default function LandingPage() {
       });
 
       if (error) {
-        const { error: updateError } = await supabase
-          .from('secrets')
-          .update({ votes: secret.votes + increment })
-          .eq('id', id);
-
-        if (updateError) console.error("Update failed", updateError);
+        // Fallback or retry logic if needed
+        console.error("RPC failed", error);
       }
     } catch (err) {
       console.error("Vote persistence failed", err);
@@ -328,7 +341,7 @@ export default function LandingPage() {
           <div className="flex items-center justify-between relative">
             <div className="flex items-center gap-2 md:gap-3 cursor-pointer" onClick={() => navigate('/')}>
               <div className="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-primary/20 flex items-center justify-center border border-primary/20 group">
-                <span className="text-white font-black text-sm md:text-lg group-hover:scale-110 transition-transform">SR</span>
+                <span className="text-sm md:text-xl group-hover:scale-110 transition-transform">🤫</span>
               </div>
               <h1 className="text-lg md:text-xl font-black tracking-tighter text-foreground dark:text-white">SECRETROOM</h1>
             </div>
@@ -744,8 +757,8 @@ export default function LandingPage() {
       {/* Footer - Restored to simple original style */}
       <footer className="border-t border-border py-12 bg-muted/30">
         <div className="container mx-auto px-4 text-center">
-          <div className="flex items-center justify-center gap-2 mb-6">
-            <Sparkles className="w-6 h-6 text-primary" />
+          <div className="flex flex-col items-center justify-center gap-2 mb-6 text-center">
+            <span className="text-3xl mb-2">🤫</span>
             <h4 className="font-bold text-xl gradient-text">Secret Room</h4>
           </div>
           <p className="text-sm text-muted-foreground mb-8 max-w-md mx-auto">

@@ -8,7 +8,8 @@ import { TruthOrDareBot } from '@/components/chat/TruthOrDareBot';
 import { HeartRain } from '@/components/chat/HeartRain';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Loader2, Send, Clock, Users, DollarSign, Sparkles, Image as ImageIcon, ArrowLeft } from 'lucide-react';
+import { Loader2, Send, Clock, Users, DollarSign, Sparkles, Image as ImageIcon, ArrowLeft, Globe } from 'lucide-react';
+import { supabase } from '@/db/supabase';
 import { useToast } from '@/hooks/use-toast';
 import type { Room, Message, RoomParticipant } from '@/types';
 import { cn } from '@/lib/utils';
@@ -223,6 +224,37 @@ export default function ChatRoomPage() {
     }
   };
 
+  const handlePostToGlobalWall = async (message: Message) => {
+    try {
+      const avatar = message.participant?.avatar_name || 'Anonymous';
+      const ghost_id = avatar;
+      const content = message.content;
+
+      const { error } = await supabase.from('secrets').insert({
+        content,
+        ghost_id,
+        avatar: avatar.includes('Ghost') ? '👻' :
+          avatar.includes('Ninja') ? '🥷' :
+            avatar.includes('Dino') ? '🦖' : '👤',
+        votes: 0
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Shared to Wall! 🌌",
+        description: "Your secret has been published to the digital void.",
+      });
+    } catch (err) {
+      console.error('Failed to post to wall:', err);
+      toast({
+        title: "Wall Error",
+        description: "Could not publish to the Global Wall.",
+        variant: "destructive"
+      });
+    }
+  };
+
   const handleShareMoment = async (message: Message) => {
     try {
       const avatarName = message.participant?.avatar_name || 'Anonymous';
@@ -420,6 +452,16 @@ export default function ChatRoomPage() {
                             {new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                           </span>
                           <div className="flex items-center gap-1 ml-auto">
+                            <button
+                              onClick={() => handlePostToGlobalWall(message)}
+                              className={cn(
+                                "p-1 rounded-full transition-all duration-200 bg-white/10 hover:bg-white/20 active:scale-90",
+                                isOwnMessage ? "text-primary-foreground/70 hover:text-primary-foreground" : "text-muted-foreground/70 hover:text-primary"
+                              )}
+                              title="Post to Global Wall"
+                            >
+                              <Globe className="w-3.5 h-3.5" />
+                            </button>
                             <button
                               onClick={() => handleShareMoment(message)}
                               className={cn(

@@ -173,7 +173,7 @@ export default function PaymentSuccessPage() {
                 <Button variant="outline" className="flex-1" onClick={copyRoomLink}>
                   <Copy className="w-4 h-4 mr-2" /> Copy Link
                 </Button>
-                <Button className="flex-1" onClick={() => navigate(`/room/${createdRoom.id}`)}>
+                <Button className="flex-1" onClick={() => navigate(`/join/${createdRoom.code}`)}>
                   Enter Room <ArrowLeft className="w-4 h-4 ml-2 rotate-180" />
                 </Button>
               </div>

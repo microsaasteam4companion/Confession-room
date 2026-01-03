@@ -35,7 +35,7 @@ import { cn } from '@/lib/utils';
 const DEFAULT_ROOM_PARAMS = {
   name: "Anonymous Room",
   max_participants: 10,
-  initial_duration: 600 // 10 minutes
+  initial_duration: 420 // 7 minutes
 };
 
 interface Secret {
@@ -286,7 +286,7 @@ export default function LandingPage() {
     {
       name: 'Free Access',
       price: '₹0',
-      duration: '5 Minutes / Room',
+      duration: '7 Minutes / Room',
       features: ['Full Anonymity', 'Random Avatars', 'Real-time Chat'],
       popular: false
     },

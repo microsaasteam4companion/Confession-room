@@ -63,7 +63,8 @@ export default function SelectPlanPage() {
             price: '$1.99',
             priceValue: 1.99,
             dodoProductId: 'pdt_0NVOHazP6EyvlJEPTCSgK',
-            duration: '25m Node Lifespan',
+            duration: '37m Node Lifespan', // 7m + 30m
+            durationBonus: 30,
             features: [
                 'Priority Link',
                 'Custom Identity',
@@ -78,7 +79,8 @@ export default function SelectPlanPage() {
             price: '$3.99',
             priceValue: 3.99,
             dodoProductId: 'pdt_0NVOHiAPdhK7HTAUzKK2E',
-            duration: '60m Node Lifespan',
+            duration: '67m Node Lifespan', // 7m + 60m
+            durationBonus: 60,
             features: [
                 'Maximum Duration',
                 'Room Styling',

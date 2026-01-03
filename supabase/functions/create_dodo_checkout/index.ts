@@ -65,7 +65,7 @@ Deno.serve(async (req) => {
         // 2. Call Dodo Payments API
         const dodoUrl = dodoApiKey.startsWith("v0_")
             ? "https://test.dodopayments.com/checkouts"
-            : "https://dodopayments.com/checkouts";
+            : "https://live.dodopayments.com/checkouts";
 
         console.log(`[DodoCheckout] Calling Dodo API: ${dodoUrl}`);
 
@@ -86,7 +86,7 @@ Deno.serve(async (req) => {
                 return_url: returnUrl,
                 metadata: {
                     order_id: order.id,
-                    room_id: room_id,
+                    room_id: room_id || "", // Dodo metadata values MUST be strings
                     type: type
                 }
             }),

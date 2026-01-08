@@ -105,7 +105,8 @@ Deno.serve(async (req) => {
         }
 
         if (!response.ok) {
-            throw new Error(session.message || `Dodo API Error: ${response.status}`);
+            console.error(`[DodoCheckout] Dodo API Error: Status ${response.status}, Body: ${responseText}`);
+            throw new Error(session.message || `Dodo API Error: ${response.status} - ${responseText.substring(0, 50)}`);
         }
 
         // 3. Update order with Dodo session ID

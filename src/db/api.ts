@@ -48,7 +48,8 @@ export const roomApi = {
         price: data.price,
         quantity: data.quantity,
         type: data.type,
-        customer: data.metadata?.customer
+        customer: data.metadata?.customer,
+        metadata: data.metadata // Pass full metadata (e.g., minutes)
       }
     });
 

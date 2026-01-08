@@ -26,6 +26,7 @@ export default function PaymentSuccessPage() {
   useEffect(() => {
     const orderId = searchParams.get('order_id');
     const paymentId = searchParams.get('payment_id');
+    const checkoutId = searchParams.get('checkout_id'); // Dodo appends checkout_id
     const status = searchParams.get('status');
 
     if (!orderId) {
@@ -40,15 +41,15 @@ export default function PaymentSuccessPage() {
       return;
     }
 
-    verifyPayment(orderId, paymentId || '');
+    verifyPayment(orderId, paymentId || '', checkoutId || '');
   }, [searchParams]);
 
-  const verifyPayment = async (orderId: string, paymentId: string) => {
+  const verifyPayment = async (orderId: string, paymentId: string, checkoutId: string) => {
     try {
       setVerifying(true);
 
       const { data, error: invokeError } = await supabase.functions.invoke('verify_dodo_payment', {
-        body: { order_id: orderId, payment_id: paymentId }
+        body: { order_id: orderId, payment_id: paymentId, checkout_id: checkoutId }
       });
 
       if (invokeError) throw new Error(invokeError.message);
@@ -58,7 +59,30 @@ export default function PaymentSuccessPage() {
         const orderData = data.order;
         setOrder(orderData);
 
-        // Check if there is a pending room creation
+        // Check if the backend already created/updated the room
+        const finalizedRoomId = orderData.new_room_id || orderData.room_id;
+
+        if (finalizedRoomId) {
+          console.log("[PaymentSuccess] Room already exists in order:", finalizedRoomId);
+          // Fetch room details for the UI
+          const roomData = await roomApi.getRoomById(finalizedRoomId);
+          if (roomData) {
+            setCreatedRoom({ code: roomData.code, id: roomData.id });
+
+            // Update LocalStorage for the user's history
+            const myRooms = JSON.parse(localStorage.getItem('my_rooms') || '[]');
+            if (!myRooms.includes(roomData.id)) {
+              myRooms.push(roomData.id);
+              localStorage.setItem('my_rooms', JSON.stringify(myRooms));
+            }
+
+            // Clear session params since we're done
+            sessionStorage.removeItem('pending_room_params');
+            return; // Exit, no need for manual creation
+          }
+        }
+
+        // Fallback: If backend didn't create it, try manual creation (Old logic)
         const pendingRoomJson = sessionStorage.getItem('pending_room_params');
         if (pendingRoomJson) {
           await handlePostPaymentRoomCreation(JSON.parse(pendingRoomJson));

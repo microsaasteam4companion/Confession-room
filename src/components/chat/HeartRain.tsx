@@ -26,7 +26,7 @@ export function HeartRain() {
                         animationName: 'fall',
                         animationDuration: `${heart.duration}s`,
                         animationDelay: `${heart.delay}s`,
-                        animationIterationCount: 'infinite',
+                        animationIterationCount: '1',
                         opacity: 0.8
                     }}
                 >

@@ -106,19 +106,23 @@ export default function ChatRoomPage() {
     return () => clearInterval(tickIntervalRef.current);
   }, [timeRemaining, messages.length]);
 
-  // Auto-scroll to bottom + Heart Rain Check
+  // Auto-scroll to bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
-    // Check for "I Love U" effect
+  // Heart Rain Trigger (Separate to avoid being cleared by new messages)
+  useEffect(() => {
     const lastMessage = messages[messages.length - 1];
     if (lastMessage && lastMessage.content.toLowerCase().includes('i love u')) {
       console.log('❤️ Triggering Heart Rain');
       setShowHearts(true);
-      const timer = setTimeout(() => setShowHearts(false), 10000); // 10 seconds
+      const timer = setTimeout(() => {
+        setShowHearts(false);
+      }, 10000); // 10 seconds limit
       return () => clearTimeout(timer);
     }
-  }, [messages]);
+  }, [messages.length]); // Only run when a NEW message arrives
 
   const loadRoomData = async () => {
     try {

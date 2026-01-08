@@ -62,7 +62,7 @@ export default function SelectPlanPage() {
             name: 'EXECUTIVE',
             price: '$1.99',
             priceValue: 1.99,
-            dodoProductId: 'pdt_0NVOHazP6EyvlJEPTCSgK',
+            dodoProductId: 'pdt_0NVOHazP6EyvlJEPTCSgK', // Production ID ($1.99)
             duration: '37m Node Lifespan', // 7m + 30m
             durationBonus: 30,
             features: [
@@ -78,7 +78,7 @@ export default function SelectPlanPage() {
             name: 'PREMIUM NODE',
             price: '$3.99',
             priceValue: 3.99,
-            dodoProductId: 'pdt_0NVOHiAPdhK7HTAUzKK2E',
+            dodoProductId: 'pdt_0NVOHiAPdhK7HTAUzKK2E', // Production ID ($3.99)
             duration: '67m Node Lifespan', // 7m + 60m
             durationBonus: 60,
             features: [

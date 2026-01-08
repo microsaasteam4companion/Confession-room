@@ -24,10 +24,14 @@ import {
   Moon,
   Sun,
   ArrowRight,
-  Terminal,
-  Heart
+  Heart,
+  HelpCircle,
+  PlusCircle,
+  MinusCircle,
+  Terminal
 } from 'lucide-react';
-import { supabase } from '../db/supabase';
+import PageMeta from '@/components/common/PageMeta';
+import { supabase } from '@/db/supabase';
 import { roomApi } from '@/db/api';
 import { cn } from '@/lib/utils';
 
@@ -54,6 +58,8 @@ export default function LandingPage() {
   const navigate = useNavigate();
 
   const [votedIds, setVotedIds] = useState<string[]>([]);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [localSecrets, setLocalSecrets] = useState<Secret[]>([]);
 
   // Initialize dark mode and load upvotes on mount
   useEffect(() => {
@@ -66,13 +72,15 @@ export default function LandingPage() {
     }
 
     // Load upvote history
-    const savedVotes = JSON.parse(localStorage.getItem('secret_votes') || '[]');
-    setVotedIds(savedVotes);
-    fetchSecrets(savedVotes);
+    try {
+      const savedVotes = JSON.parse(localStorage.getItem('secret_votes') || '[]');
+      setVotedIds(savedVotes);
+      fetchSecrets(savedVotes);
+    } catch (e) {
+      console.error('Failed to parse votes:', e);
+      fetchSecrets([]);
+    }
   }, []);
-
-  // State to track secrets from DB
-  const [localSecrets, setLocalSecrets] = useState<Secret[]>([]);
 
   // No longer need second redundant useEffect
 
@@ -333,8 +341,53 @@ export default function LandingPage() {
     }
   ];
 
+  const faqs = [
+    {
+      question: "How does the anonymity work?",
+      answer: "No signup or personal info is required. You're assigned a random avatar, and your IP/data is never linked to your identity. Once a room expires, all traces are wiped."
+    },
+    {
+      question: "Is my chat history stored?",
+      answer: "Absolutely not. We follow a 'Zero Knowledge' policy. As soon as the room timer hits zero, the database records are permanently deleted. There are no backups."
+    },
+    {
+      question: "Can I extend the room time?",
+      answer: "Yes! Any participant can extend the room lifespan by choosing a plan. This adds extra minutes to the current session instantly."
+    },
+    {
+      question: "Is Secret Room free to use?",
+      answer: "We offer a 'First One Free' policy for new users to test the platform (7 minutes). For longer sessions or priority features, we offer affordable micro-plans."
+    },
+    {
+      question: "What is the Global Whisper Wall?",
+      answer: "It's a collection of anonymous confessions shared by users from their private rooms. You can choose to 'Whisper to the Void' to feature your message there."
+    }
+  ];
+
+  // AEO: FAQ Schema
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqs.map(faq => ({
+      "@type": "Question",
+      "name": faq.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": faq.answer
+      }
+    }))
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-300">
+      <PageMeta
+        title="Secret Room | Anonymous Encrypted Chat"
+        description="Share secrets anonymously. No history, no signup. The ultimate private communication layer."
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 w-full border-b border-white/5 bg-white/80 dark:bg-black/80 backdrop-blur-xl transition-all duration-300">
         <div className="w-full px-4 md:px-6 py-3 md:py-4">
@@ -750,6 +803,60 @@ export default function LandingPage() {
                 </div>
               </CardContent>
             </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section - Massive Impact for SEO/AEO */}
+      <section id="faq" className="py-24 xl:py-32 bg-slate-50/50 dark:bg-zinc-900/50 border-t border-border/50">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <div className="text-center space-y-4 mb-20">
+            <Badge variant="outline" className="px-6 py-1 bg-primary/5 border-primary/20 text-primary font-bold uppercase tracking-wider">Common Questions</Badge>
+            <h2 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white tracking-tight">
+              Everything You Need to <span className="text-primary italic">Know</span>
+            </h2>
+          </div>
+
+          <div className="space-y-4">
+            {faqs.map((faq, idx) => (
+              <Card
+                key={idx}
+                className={cn(
+                  "rounded-3xl border-black/5 dark:border-white/5 bg-white dark:bg-zinc-900 shadow-sm overflow-hidden transition-all duration-300",
+                  openFaq === idx ? "ring-1 ring-primary/50 shadow-lg shadow-primary/5" : "hover:border-primary/20"
+                )}
+              >
+                <button
+                  onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
+                  className="w-full p-6 md:p-8 flex items-center justify-between text-left group"
+                >
+                  <span className="text-lg md:text-xl font-black text-slate-800 dark:text-white/90 group-hover:text-primary transition-colors">
+                    {faq.question}
+                  </span>
+                  <div className="shrink-0 ml-4">
+                    {openFaq === idx ? (
+                      <MinusCircle className="w-6 h-6 text-primary" />
+                    ) : (
+                      <PlusCircle className="w-6 h-6 text-slate-400 group-hover:text-primary transition-colors" />
+                    )}
+                  </div>
+                </button>
+                {openFaq === idx && (
+                  <div className="px-6 md:px-8 pb-8 animate-in slide-in-from-top-2 duration-300">
+                    <p className="text-slate-500 dark:text-gray-400 font-medium leading-relaxed text-base md:text-lg">
+                      {faq.answer}
+                    </p>
+                  </div>
+                )}
+              </Card>
+            ))}
+          </div>
+
+          <div className="mt-16 text-center">
+            <p className="text-muted-foreground font-medium mb-4 italic">Still have a burning question?</p>
+            <Button variant="link" className="text-primary font-black uppercase tracking-widest text-sm underline-offset-8">
+              Open a Secure Support Ticket
+            </Button>
           </div>
         </div>
       </section>

@@ -14,7 +14,6 @@ const SITEMAP_PATH = path.join(PUBLIC_DIR, 'sitemap.xml');
 const routes = [
     { path: '', priority: '1.0', changefreq: 'daily' },
     { path: 'wall', priority: '0.8', changefreq: 'daily' },
-    { path: 'admin', priority: '0.5', changefreq: 'monthly' },
 ];
 
 function generateSitemap() {

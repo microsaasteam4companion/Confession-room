@@ -854,13 +854,9 @@ export default function LandingPage() {
 
           <div className="mt-16 text-center">
             <p className="text-muted-foreground font-medium mb-4 italic">Still have a burning question?</p>
-            <Button
-              variant="link"
-              className="text-primary font-black uppercase tracking-widest text-sm underline-offset-8"
-              onClick={() => window.location.href = 'mailto:business@entrext.in?subject=Secret Room Support Request'}
-            >
-              Open a Secure Support Ticket
-            </Button>
+            <p className="text-primary/80 font-medium text-sm">
+              Contact on <a href="mailto:business@entrext.in" className="text-primary underline font-bold">business@entrext.in</a> for any queries or support
+            </p>
           </div>
         </div>
       </section>

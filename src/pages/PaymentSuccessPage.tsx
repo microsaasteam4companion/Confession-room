@@ -122,7 +122,7 @@ export default function PaymentSuccessPage() {
 
     } catch (err) {
       console.error('Failed to create room after payment:', err);
-      setError('Payment successful, but failed to create room. Please contact support.');
+      setError('Payment successful, but failed to create room. Please contact on business@entrext.in for support.');
     } finally {
       setCreatingRoom(false);
     }

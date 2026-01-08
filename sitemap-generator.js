@@ -6,7 +6,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // CONFIGURATION
-const SITE_URL = 'https://confessions-chi.vercel.app'; // Updated to your Vercel URL
+const SITE_URL = 'https://secretroom.entrext.in'; // Updated to your custom domain
 const PUBLIC_DIR = path.resolve(__dirname, 'public');
 const SITEMAP_PATH = path.join(PUBLIC_DIR, 'sitemap.xml');
 

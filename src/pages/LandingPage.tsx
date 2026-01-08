@@ -854,7 +854,11 @@ export default function LandingPage() {
 
           <div className="mt-16 text-center">
             <p className="text-muted-foreground font-medium mb-4 italic">Still have a burning question?</p>
-            <Button variant="link" className="text-primary font-black uppercase tracking-widest text-sm underline-offset-8">
+            <Button
+              variant="link"
+              className="text-primary font-black uppercase tracking-widest text-sm underline-offset-8"
+              onClick={() => window.location.href = 'mailto:business@entrext.in?subject=Secret Room Support Request'}
+            >
               Open a Secure Support Ticket
             </Button>
           </div>
@@ -868,9 +872,14 @@ export default function LandingPage() {
             <span className="text-3xl mb-2">🤫</span>
             <h4 className="font-bold text-xl gradient-text">Secret Room</h4>
           </div>
-          <p className="text-sm text-muted-foreground mb-8 max-w-md mx-auto">
+          <p className="text-sm text-muted-foreground mb-4 max-w-md mx-auto">
             Ephemeral anonymous chat platform. Share secrets, leave no trace.
           </p>
+          <div className="mb-8">
+            <a href="mailto:business@entrext.in" className="text-xs font-bold text-primary hover:underline">
+              business@entrext.in
+            </a>
+          </div>
           <div className="flex justify-center gap-8 mb-8 text-sm font-medium">
             <a href="#features" className="hover:text-primary transition-colors">Features</a>
             <a href="#how-it-works" className="hover:text-primary transition-colors">How It Works</a>

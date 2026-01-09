@@ -19,13 +19,11 @@ import {
   QrCode,
   MessageSquare,
   Timer,
-  CheckCircle,
   CheckCircle2,
   Moon,
   Sun,
   ArrowRight,
   Heart,
-  HelpCircle,
   PlusCircle,
   MinusCircle,
   Terminal
@@ -381,8 +379,8 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-300">
       <PageMeta
-        title="Secret Room | Anonymous Encrypted Chat"
-        description="Share secrets anonymously. No history, no signup. The ultimate private communication layer."
+        title="Free Anonymous Chat Platform | No Signups, No Email, No Trace"
+        description="Free Anonymous Chat Platform. No Login, No Email, No History. Secure and encrypted communication. Start chatting instantly."
       />
       <script
         type="application/ld+json"
@@ -442,7 +440,7 @@ export default function LandingPage() {
           >
             <span className="text-[10px] md:text-xs font-black tracking-[0.2em] text-pink-500 uppercase flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-pink-500 animate-pulse" />
-              🛰️ Free & Anonymous Communication Layer
+              🛰️ Free Anonymous Chat Platform: No Signups, No Email, No Trace
             </span>
           </motion.div>
 
@@ -453,11 +451,11 @@ export default function LandingPage() {
             transition={{ delay: 0.1, duration: 0.8 }}
             className="space-y-2 md:space-y-0 mb-8 md:mb-12"
           >
-            <h1 className="text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter text-slate-900 dark:text-white leading-[0.9] uppercase">
-              Share Secrets.
+            <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter text-slate-900 dark:text-white leading-[0.9] uppercase">
+              Free Anonymous
             </h1>
-            <h2 className="text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-[0.9] uppercase cycling-gradient italic">
-              Leave No Trace.
+            <h2 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.9] uppercase cycling-gradient italic">
+              Chat Platform.
             </h2>
           </motion.div>
 
@@ -468,7 +466,7 @@ export default function LandingPage() {
             transition={{ delay: 0.3 }}
             className="text-base sm:text-lg md:text-2xl text-slate-500 dark:text-slate-400 font-medium max-w-3xl mx-auto leading-relaxed mb-10 md:mb-16 px-2"
           >
-            Time-limited anonymous chat nodes where words dissolve into the void. <span className="text-slate-900 dark:text-white font-bold block sm:inline mt-2 sm:mt-0">Free. No signup. No history. Pure privacy.</span>
+            Skip the login hassle. Start chatting instantly. <span className="text-slate-900 dark:text-white font-bold block sm:inline mt-2 sm:mt-0">Free. No Email. No History. Pure Privacy by Secret Room.</span>
           </motion.p>
 
           {/* CTAs */}
@@ -861,6 +859,27 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* SEO Keywords Section - Hidden from UI but present for Bots */}
+      <section className="sr-only">
+        <div className="container mx-auto px-4 text-center">
+          <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-6">Trending Topics & User Needs</p>
+          <div className="flex flex-wrap justify-center gap-2 max-w-4xl mx-auto">
+            {[
+              "#AnonymousChat", "#NoSignup", "#PrivacyMatters", "#PrivateConversation",
+              "#OnlineSecurity", "#SecretChat", "#GhostMode", "#NoLogin",
+              "#EncryptedMessaging", "#TalkToStrangers", "#DataPrivacy",
+              "#Secretroom", "#Entrext", "#SecureChat", "#FreePlatform",
+              "#FreeChat", "#Anonymous", "#PrivateChat", "#OnlinePrivacy",
+              "#SafeSpace", "#ChatFree", "#NoTrace"
+            ].map((tag, i) => (
+              <span key={i} className="text-[10px] md:text-xs font-medium px-3 py-1 rounded-full bg-background border border-border/50 text-muted-foreground hover:text-primary hover:border-primary/30 transition-colors cursor-default">
+                {tag}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Footer - Restored to simple original style */}
       <footer className="border-t border-border py-12 bg-muted/30">
         <div className="container mx-auto px-4 text-center">
@@ -872,18 +891,20 @@ export default function LandingPage() {
             Ephemeral anonymous chat platform. Share secrets, leave no trace.
           </p>
           <div className="mb-8">
-            <a href="mailto:business@entrext.in" className="text-xs font-bold text-primary hover:underline">
-              business@entrext.in
-            </a>
+            <p className="text-primary/80 font-medium text-sm">
+              Contact on <a href="mailto:business@entrext.in" className="text-primary underline font-bold">business@entrext.in</a> for any queries or support
+            </p>
           </div>
-          <div className="flex justify-center gap-8 mb-8 text-sm font-medium">
+          <div className="flex justify-center gap-8 mb-8 text-sm font-medium flex-wrap">
             <a href="#features" className="hover:text-primary transition-colors">Features</a>
             <a href="#how-it-works" className="hover:text-primary transition-colors">How It Works</a>
             <a href="#pricing" className="hover:text-primary transition-colors">Pricing</a>
+            <button onClick={() => navigate('/privacy')} className="hover:text-primary transition-colors">Privacy Policy</button>
+            <button onClick={() => navigate('/terms')} className="hover:text-primary transition-colors">Terms of Service</button>
           </div>
           <Separator className="my-8 opacity-50" />
           <p className="text-xs text-muted-foreground">
-            © 2025 Secret Room. All conversations are ephemeral and end-to-end encrypted.
+            © 2026 Secret Room. All conversations are ephemeral and end-to-end encrypted.
           </p>
         </div>
       </footer>

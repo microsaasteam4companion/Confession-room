@@ -18,7 +18,9 @@ const PUBLIC_ROUTES = [
   '/extend/*',
   '/payment-success',
   '/admin',
-  '/admin/create-room'
+  '/admin/create-room',
+  '/privacy',
+  '/terms'
 ];
 
 function matchPublicRoute(path: string, patterns: string[]) {

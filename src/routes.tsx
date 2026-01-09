@@ -7,6 +7,8 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import CreateRoomPage from './pages/admin/CreateRoomPage';
 import SelectPlanPage from './pages/SelectPlanPage';
 import PublicWallPage from './pages/PublicWallPage';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
 import NotFound from './pages/NotFound';
 import type { ReactNode } from 'react';
 
@@ -62,6 +64,16 @@ const routes: RouteConfig[] = [
     name: 'Select Plan',
     path: '/select-plan',
     element: <SelectPlanPage />
+  },
+  {
+    name: 'Privacy Policy',
+    path: '/privacy',
+    element: <PrivacyPolicy />
+  },
+  {
+    name: 'Terms of Service',
+    path: '/terms',
+    element: <TermsOfService />
   },
   {
     name: 'Not Found',

@@ -1,75 +1,63 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card } from '@/components/ui/card';
-import { motion } from 'motion/react';
-import {
-    Sparkles,
-    Heart,
-    ArrowLeft,
-    Zap,
-    Moon,
-    Sun,
-    MessageSquare,
-    Plus,
-    Loader2
-} from 'lucide-react';
 import { supabase } from '@/db/supabase';
 import { cn } from '@/lib/utils';
+import { CATEGORIES } from '@/data/categories';
+import { ArrowLeft, Loader2, Plus, Sun, Moon } from 'lucide-react';
+import CreateSecretModal from '@/components/wall/CreateSecretModal';
+import SecretCard from '@/components/wall/SecretCard';
+import { parseSecretContent } from '@/utils/secretUtils';
+import { Card } from '@/components/ui/card';
+import { DUMMY_SECRETS } from '@/data/dummySecrets';
 
 export default function PublicWallPage() {
     const navigate = useNavigate();
     const [darkMode, setDarkMode] = useState(true);
-
     const [secrets, setSecrets] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [votedIds, setVotedIds] = useState<string[]>([]);
+    const [activeFilter, setActiveFilter] = useState('all');
 
     useEffect(() => {
         const isDark = localStorage.getItem('darkMode') !== 'false';
         setDarkMode(isDark);
-        if (isDark) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
+        if (isDark) document.documentElement.classList.add('dark');
+        else document.documentElement.classList.remove('dark');
 
-        // Load upvote history
         const savedVotes = JSON.parse(localStorage.getItem('secret_votes') || '[]');
         setVotedIds(savedVotes);
-
-        fetchSecrets(savedVotes);
+        fetchSecrets();
     }, []);
 
-    const fetchSecrets = async (currentVotedIds?: string[]) => {
-        const activeVotedIds = currentVotedIds || votedIds;
+    const fetchSecrets = async () => {
         try {
+            setLoading(true);
             const { data, error } = await supabase
                 .from('secrets')
                 .select('*')
-                .order('votes', { ascending: false })
-                .limit(10);
+                .order('created_at', { ascending: false })
+                .limit(50);
 
             if (error) throw error;
 
-            // Assign random visual styles if they don't exist
-            const styles = [
-                { gradient: "from-amber-500/20 to-orange-500/20", border: "border-amber-500/30", glow: "shadow-amber-500/20" },
-                { gradient: "from-purple-500/20 to-indigo-500/20", border: "border-purple-500/30", glow: "shadow-purple-500/20" },
-                { gradient: "from-rose-500/20 to-pink-500/20", border: "border-rose-500/30", glow: "shadow-rose-500/20" },
-                { gradient: "from-indigo-500/20 to-blue-500/20", border: "border-indigo-500/30", glow: "shadow-indigo-500/20" },
-                { gradient: "from-emerald-500/20 to-teal-500/20", border: "border-emerald-500/30", glow: "shadow-emerald-500/20" }
-            ];
+            // 1. Merge with Dummy Data
+            const realSecrets = data || [];
 
-            const formatted = (data || []).map((s, idx) => ({
-                ...s,
-                ...styles[idx % styles.length],
-                voted: activeVotedIds.includes(s.id),
-                size: s.content.length > 100 ? 'large' : s.content.length > 50 ? 'medium' : 'small'
-            }));
+            // 2. Filter Expired Secrets
+            const now = new Date();
+            const validSecrets = [...realSecrets, ...DUMMY_SECRETS].filter(secret => {
+                const contentData = parseSecretContent(secret.content);
+                if (contentData.expiresAt) {
+                    const expiry = new Date(contentData.expiresAt);
+                    if (expiry < now) return false; // Expired
+                }
+                return true;
+            });
 
-            setSecrets(formatted);
+            // 3. Sort by Votes/Date: Real secrets first (usually newer), then mixed with random dummy
+            // For now, simpler: just use the merged list.
+            setSecrets(validSecrets);
         } catch (err) {
             console.error('Wall Fetch Error:', err);
         } finally {
@@ -81,174 +69,190 @@ export default function PublicWallPage() {
         const newDarkMode = !darkMode;
         setDarkMode(newDarkMode);
         localStorage.setItem('darkMode', String(newDarkMode));
-        if (newDarkMode) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
+        if (newDarkMode) document.documentElement.classList.add('dark');
+        else document.documentElement.classList.remove('dark');
     };
 
     const handleUpvote = async (id: string) => {
+        // Optimistic update handled in Card, this handles DB/Storage
         const isVoted = votedIds.includes(id);
-        const increment = isVoted ? -1 : 1;
+        if (isVoted) return;
 
-        // Local State Update
-        setSecrets(prev => prev.map(s => {
-            if (s.id === id) {
-                return { ...s, votes: s.votes + increment };
-            }
-            return s;
-        }));
-
-        // Persistence Logic
-        let newVotedIds;
-        if (isVoted) {
-            newVotedIds = votedIds.filter(vid => vid !== id);
-        } else {
-            newVotedIds = [...votedIds, id];
-        }
+        const newVotedIds = [...votedIds, id];
         setVotedIds(newVotedIds);
         localStorage.setItem('secret_votes', JSON.stringify(newVotedIds));
 
-        // DB Sync
         try {
-            await supabase.rpc('increment_secret_vote', {
-                row_id: id,
-                inc: increment
-            });
+            await supabase.rpc('increment_secret_vote', { row_id: id, inc: 1 });
         } catch (err) {
             console.error('Vote Sync Error:', err);
         }
     };
 
+    // Filter Logic
+    const filteredSecrets = secrets.filter(secret => {
+        if (activeFilter === 'all') return true;
+        const data = parseSecretContent(secret.content);
+        return data.categoryId === activeFilter;
+    });
+
     return (
-        <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-300">
-            {/* Wall Header */}
-            <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-lg">
-                <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-                    <div className="flex items-center gap-4">
-                        <Button variant="ghost" size="icon" onClick={() => navigate('/')} className="rounded-full">
+        <div className="min-h-screen bg-background text-foreground transition-colors duration-300 flex flex-col">
+            {/* Mobile-First Header */}
+            <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-xl">
+                <div className="container max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <Button variant="ghost" size="icon" onClick={() => navigate('/')} className="rounded-full -ml-2">
                             <ArrowLeft className="w-5 h-5" />
                         </Button>
-                        <div className="flex items-center gap-2">
-                            <span className="text-2xl">🤫</span>
-                            <h1 className="text-xl font-bold gradient-text hidden sm:block">Global Whisper Wall</h1>
-                        </div>
+                        <h1 className="font-black text-lg tracking-tight">The Void</h1>
                     </div>
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2">
                         <Button variant="ghost" size="icon" onClick={toggleDarkMode} className="rounded-full">
-                            {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                            {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
                         </Button>
-                        <Button variant="default" size="sm" onClick={() => navigate('/admin/create-room')} className="btn-shimmer font-bold rounded-full px-6">
-                            <Plus className="w-4 h-4 mr-2" />
-                            New Room
-                        </Button>
+                        <CreateSecretModal
+                            onPostSuccess={fetchSecrets}
+                            defaultCategory={activeFilter !== 'all' ? activeFilter : undefined}
+                            trigger={
+                                <Button size="sm" className="rounded-full font-bold px-4 bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20">
+                                    <Plus className="w-4 h-4 mr-1" /> Post
+                                </Button>
+                            }
+                        />
+                    </div>
+                </div>
+
+                {/* Categories Tab Scroll (Mobile Only) */}
+                <div className="md:hidden border-t border-border/50 bg-muted/20">
+                    <div className="container max-w-xl mx-auto px-4 overflow-x-auto scrollbar-hide py-2">
+                        <div className="flex items-center gap-2 min-w-max">
+                            <button
+                                onClick={() => setActiveFilter('all')}
+                                className={cn(
+                                    "whitespace-nowrap px-4 py-1.5 rounded-full text-xs font-bold transition-all border",
+                                    activeFilter === 'all'
+                                        ? "bg-foreground text-background border-foreground text-foreground"
+                                        : "bg-background/50 text-muted-foreground border-transparent"
+                                )}
+                            >
+                                All Posts
+                            </button>
+                            {CATEGORIES.map(cat => (
+                                <button
+                                    key={cat.id}
+                                    onClick={() => setActiveFilter(cat.id)}
+                                    className={cn(
+                                        "whitespace-nowrap px-4 py-1.5 rounded-full text-xs font-bold transition-all border flex items-center gap-2",
+                                        activeFilter === cat.id
+                                            ? `bg-background border-current ${cat.color}`
+                                            : "bg-transparent text-muted-foreground border-transparent"
+                                    )}
+                                >
+                                    <cat.icon className="w-3 h-3" />
+                                    {cat.label}
+                                </button>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </header>
 
-            {/* Main Content */}
-            < main className="flex-1 container mx-auto px-4 py-12" >
-                <div className="text-center space-y-4 mb-20 max-w-2xl mx-auto">
-                    <Badge variant="outline" className="px-6 py-1 bg-primary/5 border-primary/20 text-primary font-bold">🌌 The Void Speaks</Badge>
-                    <h2 className="text-4xl md:text-5xl font-bold tracking-tight">Public Confessions</h2>
-                    <p className="text-muted-foreground leading-relaxed">
-                        Real secrets from real users who chose to speak their truth.
-                        Scroll, upvote, and explore the unfiltered digital void.
-                    </p>
-                </div>
-
-                {
-                    loading ? (
-                        <div className="flex flex-col items-center justify-center py-20 gap-4">
-                            <Loader2 className="w-12 h-12 text-primary animate-spin" />
-                            <p className="text-muted-foreground animate-pulse">Summoning secrets from the void...</p>
-                        </div>
-                    ) : (
-                        <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6">
-                            {secrets.map((item) => (
-                                <motion.div
-                                    key={item.id}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true }}
-                                    whileHover={{ scale: 1.02 }}
+            <div className="container max-w-6xl mx-auto px-4 py-6 flex-1 grid md:grid-cols-[240px_1fr] gap-8 items-start">
+                {/* Desktop Sidebar */}
+                <aside className="hidden md:block sticky top-24 space-y-6">
+                    <div className="bg-card/30 backdrop-blur-sm border border-border/50 rounded-2xl p-4">
+                        <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-4 px-2">Vibes</h3>
+                        <div className="space-y-1">
+                            <button
+                                onClick={() => setActiveFilter('all')}
+                                className={cn(
+                                    "w-full text-left px-4 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-3",
+                                    activeFilter === 'all'
+                                        ? "bg-foreground text-background shadow-lg"
+                                        : "hover:bg-muted/50 text-muted-foreground hover:text-foreground"
+                                )}
+                            >
+                                <span className="text-lg">🌍</span>
+                                All Posts
+                            </button>
+                            {CATEGORIES.map(cat => (
+                                <button
+                                    key={cat.id}
+                                    onClick={() => setActiveFilter(cat.id)}
                                     className={cn(
-                                        "break-inside-avoid relative p-8 rounded-3xl border backdrop-blur-3xl transition-all cursor-default overflow-hidden group mb-6",
-                                        "bg-white/40 dark:bg-white/10 border-white/20 dark:border-white/20",
-                                        item.border,
-                                        "shadow-lg hover:shadow-2xl",
-                                        item.glow
+                                        "w-full text-left px-4 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-3",
+                                        activeFilter === cat.id
+                                            ? `bg-primary/10 border border-primary/20 ${cat.color}`
+                                            : "hover:bg-muted/50 text-muted-foreground hover:text-foreground"
                                     )}
                                 >
-                                    {/* Internal Blurred Gradient */}
-                                    <div className={cn(
-                                        "absolute inset-0 bg-gradient-to-br opacity-20 blur-3xl -z-10 group-hover:opacity-40 transition-opacity duration-700",
-                                        item.gradient
-                                    )} />
-
-                                    <div className="relative z-10 space-y-4">
-                                        <div className="flex justify-between items-start">
-                                            <Zap className="w-5 h-5 text-primary opacity-50" />
-                                            <button
-                                                onClick={() => handleUpvote(item.id)}
-                                                className={cn(
-                                                    "flex items-center gap-1.5 text-xs font-bold transition-all p-2 rounded-full hover:bg-primary/10",
-                                                    votedIds.includes(item.id) ? "text-primary scale-110" : "text-muted-foreground hover:text-primary"
-                                                )}
-                                            >
-                                                <Heart className={cn("w-4 h-4 transition-all", votedIds.includes(item.id) ? "fill-primary" : "fill-primary/20")} />
-                                                <span>{item.votes}</span>
-                                            </button>
-                                        </div>
-
-                                        <p className={cn(
-                                            "font-bold leading-relaxed italic text-foreground/80 dark:text-white/80 group-hover:text-foreground dark:group-hover:text-white transition-colors",
-                                            item.size === 'large' ? "text-2xl" : "text-lg"
-                                        )}>
-                                            "{item.content}"
-                                        </p>
-
-                                        <div className="pt-4 flex items-center gap-2">
-                                            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">
-                                                {item.avatar || '?'}
-                                            </div>
-                                            <span className="text-xs font-medium text-muted-foreground italic">{item.ghost_id || 'Anonymous Guest'}</span>
-                                        </div>
-                                    </div>
-                                </motion.div>
+                                    <cat.icon className={cn("w-4 h-4", activeFilter === cat.id ? "text-current" : "text-muted-foreground")} />
+                                    {cat.label}
+                                </button>
                             ))}
                         </div>
-                    )
-                }
+                    </div>
 
-                {/* Action Bar */}
-                <div className="mt-20 text-center">
-                    <Card className="max-w-xl mx-auto glass-card dark:bg-black/90 dark:border-white/20 p-10 space-y-6 border-primary/20 transition-colors duration-300">
-                        <h3 className="text-2xl font-bold">Have your own secret?</h3>
-                        <p className="text-muted-foreground">
-                            Create a room, invite friends, and share your truth. Choose to make it public if you dare.
-                        </p>
-                        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                            <Button size="lg" onClick={() => navigate('/admin/create-room')} className="btn-shimmer px-8">
-                                <MessageSquare className="w-5 h-5 mr-2" />
-                                Start Gossiping
-                            </Button>
-                            <Button size="lg" variant="outline" onClick={() => navigate('/')} className="px-8">
-                                Back Home
-                            </Button>
+                    <div className="p-4 bg-primary/5 rounded-2xl border border-primary/10">
+                        <div className="flex items-center gap-2 mb-2">
+                            <span className="text-lg">🕵️‍♂️</span>
+                            <span className="text-xs font-bold text-primary uppercase">Privacy Check</span>
                         </div>
-                    </Card>
-                </div>
-            </main >
+                        <p className="text-xs text-muted-foreground leading-relaxed">
+                            Your identity is randomly generated for <strong>every single post</strong>.
+                            <br /><br />
+                            No profiles. No history. Just the void.
+                        </p>
+                    </div>
+                </aside>
 
-            {/* Basic Footer */}
-            < footer className="border-t border-border py-8 mt-12 opacity-50 px-4 text-center" >
-                <p className="text-xs text-muted-foreground">
-                    © 2025 Secret Room. Global Whisper Wall. All messages are ephemeral by nature.
-                </p>
-            </footer >
-        </div >
+                {/* Main Feed */}
+                <main className="max-w-xl mx-auto w-full space-y-6">
+                    {loading ? (
+                        <div className="flex flex-col items-center justify-center py-20 gap-4">
+                            <Loader2 className="w-10 h-10 text-primary animate-spin" />
+                            <p className="text-sm text-muted-foreground font-medium animate-pulse">Syncing with the void...</p>
+                        </div>
+                    ) : (
+                        <>
+                            {filteredSecrets.length === 0 ? (
+                                <div className="text-center py-20 opacity-50">
+                                    <p>No secrets found in this void... yet.</p>
+                                    <div className="mt-4">
+                                        <CreateSecretModal onPostSuccess={fetchSecrets} />
+                                    </div>
+                                </div>
+                            ) : (
+                                filteredSecrets.map((secret) => (
+                                    <SecretCard
+                                        key={secret.id}
+                                        secret={secret}
+                                        onVote={handleUpvote}
+                                        isVoted={votedIds.includes(secret.id)}
+                                    />
+                                ))
+                            )}
+
+                            {/* End of Feed CTA */}
+                            {filteredSecrets.length > 0 && (
+                                <div className="py-12 text-center space-y-4">
+                                    <p className="text-xs text-muted-foreground uppercase tracking-widest">End of the Void</p>
+                                    <div className="w-1 h-8 bg-gradient-to-b from-border to-transparent mx-auto" />
+                                    <Card className="p-6 bg-muted/30 border-dashed border-border">
+                                        <p className="text-sm text-muted-foreground mb-4">Have something to confess?</p>
+                                        <CreateSecretModal
+                                            onPostSuccess={fetchSecrets}
+                                            defaultCategory={activeFilter !== 'all' ? activeFilter : undefined}
+                                        />
+                                    </Card>
+                                </div>
+                            )}
+                        </>
+                    )}
+                </main>
+            </div>
+        </div>
     );
 }

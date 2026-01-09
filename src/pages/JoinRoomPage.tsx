@@ -129,9 +129,9 @@ export default function JoinRoomPage() {
           <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4 mx-auto float">
             <Sparkles className="w-6 h-6 md:w-8 md:h-8 text-primary" />
           </div>
-          <CardTitle className="text-2xl md:text-3xl gradient-text font-bold">
+          <h1 className="text-2xl md:text-3xl gradient-text font-bold leading-none tracking-tight">
             {room.name}
-          </CardTitle>
+          </h1>
           <CardDescription className="text-sm md:text-base mt-2">
             Invited to join secure room <br />
             <span className="font-mono font-bold text-primary bg-primary/5 px-2 py-0.5 rounded border border-primary/20 inline-block mt-1">
@@ -191,6 +191,17 @@ export default function JoinRoomPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* SEO Content */}
+      <div className="sr-only">
+        <h2>Join Secure Anonymous Chat</h2>
+        <p>
+          Enter the secure room code to join an end-to-end encrypted chat session.
+          Your identity will be masked with a random avatar.
+          No signup required. No history is saved.
+          Perfect for confidential whistleblowing, anonymous feedback, or private confessions.
+        </p>
+      </div>
     </div>
   );
 }

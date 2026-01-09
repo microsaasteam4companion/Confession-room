@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 
@@ -18,7 +18,7 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!username.trim() || !password.trim()) {
       toast({
         title: 'Error',
@@ -39,8 +39,8 @@ export default function LoginPage() {
     }
 
     setLoading(true);
-    
-    const { error } = isLogin 
+
+    const { error } = isLogin
       ? await signIn(username, password)
       : await signUp(username, password);
 
@@ -65,9 +65,9 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center p-4">
       <Card className="w-full max-w-md glass-card">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-3xl font-bold text-center gradient-text">
+          <h1 className="text-3xl font-bold text-center gradient-text">
             Secret Room
-          </CardTitle>
+          </h1>
           <CardDescription className="text-center">
             {isLogin ? 'Sign in to create and manage rooms' : 'Create an admin account'}
           </CardDescription>
@@ -98,9 +98,9 @@ export default function LoginPage() {
                 autoComplete={isLogin ? 'current-password' : 'new-password'}
               />
             </div>
-            <Button 
-              type="submit" 
-              className="w-full" 
+            <Button
+              type="submit"
+              className="w-full"
               disabled={loading}
             >
               {loading ? 'Please wait...' : isLogin ? 'Sign In' : 'Sign Up'}
@@ -117,6 +117,17 @@ export default function LoginPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* SEO Content */}
+      <div className="sr-only">
+        <h2>About Secret Room Admin Panel</h2>
+        <p>
+          Securely log in to manage your anonymous chat rooms.
+          Use the admin dashboard to create new ephemeral rooms, view active nodes,
+          and monitor encrypted traffic without compromising user privacy.
+          No personal data is ever stored or logged.
+        </p>
+      </div>
     </div>
   );
 }

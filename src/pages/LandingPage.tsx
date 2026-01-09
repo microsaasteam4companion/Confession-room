@@ -396,7 +396,7 @@ export default function LandingPage() {
               <div className="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-primary/20 flex items-center justify-center border border-primary/20 group">
                 <span className="text-sm md:text-xl group-hover:scale-110 transition-transform">🤫</span>
               </div>
-              <h1 className="text-lg md:text-xl font-black tracking-tighter text-foreground dark:text-white">SECRETROOM</h1>
+              <span className="text-lg md:text-xl font-black tracking-tighter text-foreground dark:text-white">SECRETROOM</span>
             </div>
 
             {/* Desktop Nav - Hidden on Mobile */}
@@ -442,7 +442,7 @@ export default function LandingPage() {
           >
             <span className="text-[10px] md:text-xs font-black tracking-[0.2em] text-pink-500 uppercase flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-pink-500 animate-pulse" />
-              🛰️ Anonymous Communication Layer
+              🛰️ Free & Anonymous Communication Layer
             </span>
           </motion.div>
 
@@ -456,9 +456,9 @@ export default function LandingPage() {
             <h1 className="text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter text-slate-900 dark:text-white leading-[0.9] uppercase">
               Share Secrets.
             </h1>
-            <h1 className="text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-[0.9] uppercase cycling-gradient italic">
+            <h2 className="text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-[0.9] uppercase cycling-gradient italic">
               Leave No Trace.
-            </h1>
+            </h2>
           </motion.div>
 
           {/* Subtext */}
@@ -468,7 +468,7 @@ export default function LandingPage() {
             transition={{ delay: 0.3 }}
             className="text-base sm:text-lg md:text-2xl text-slate-500 dark:text-slate-400 font-medium max-w-3xl mx-auto leading-relaxed mb-10 md:mb-16 px-2"
           >
-            Time-limited anonymous chat nodes where words dissolve into the void. <span className="text-slate-900 dark:text-white font-bold block sm:inline mt-2 sm:mt-0">No signup. No history. Pure privacy.</span>
+            Time-limited anonymous chat nodes where words dissolve into the void. <span className="text-slate-900 dark:text-white font-bold block sm:inline mt-2 sm:mt-0">Free. No signup. No history. Pure privacy.</span>
           </motion.p>
 
           {/* CTAs */}

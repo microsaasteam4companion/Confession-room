@@ -13,6 +13,7 @@ export interface SecretData {
         relatable: number;
     };
     expiresAt?: string; // ISO Date String
+    views?: number;
 }
 
 export function parseSecretContent(content: string): SecretData {
@@ -26,7 +27,8 @@ export function parseSecretContent(content: string): SecretData {
                     categoryId: parsed.categoryId,
                     identity: parsed.identity || { avatar: '👻', name: 'Anonymous Ghost' },
                     reactions: parsed.reactions || { hug: 0, shock: 0, relatable: 0 },
-                    expiresAt: parsed.expiresAt
+                    expiresAt: parsed.expiresAt,
+                    views: parsed.views || 0
                 };
             }
         }
@@ -42,7 +44,8 @@ export function parseSecretContent(content: string): SecretData {
             avatar: '👻',
             name: 'Anonymous Guest'
         },
-        reactions: { hug: 0, shock: 0, relatable: 0 }
+        reactions: { hug: 0, shock: 0, relatable: 0 },
+        views: 0
     };
 }
 

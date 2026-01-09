@@ -7,6 +7,7 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import CreateRoomPage from './pages/admin/CreateRoomPage';
 import SelectPlanPage from './pages/SelectPlanPage';
 import PublicWallPage from './pages/PublicWallPage';
+import MidnightClubPage from './pages/MidnightClubPage';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
 import NotFound from './pages/NotFound';
@@ -29,6 +30,11 @@ const routes: RouteConfig[] = [
     name: 'Global Wall',
     path: '/wall',
     element: <PublicWallPage />
+  },
+  {
+    name: 'The Midnight Club',
+    path: '/club',
+    element: <MidnightClubPage />
   },
   {
     name: 'Join Room',

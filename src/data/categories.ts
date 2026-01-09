@@ -72,5 +72,14 @@ export const CATEGORIES: Category[] = [
         borderColor: 'border-pink-500/50',
         gradient: 'from-pink-900/20 to-rose-900/20',
         icon: Ghost
+    },
+    {
+        id: 'incinerator',
+        label: 'Digital Incinerator',
+        description: 'Read Fast. It Burns.',
+        color: 'text-red-600',
+        borderColor: 'border-red-600/50',
+        gradient: 'from-red-950 to-orange-950',
+        icon: Flame
     }
 ];

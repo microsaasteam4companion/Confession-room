@@ -2,10 +2,9 @@ import { motion } from 'motion/react';
 import { getCategory, parseSecretContent, SecretData } from '@/utils/secretUtils';
 import { cn } from '@/lib/utils';
 import { Share2, Clock } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/db/supabase';
-import { useToast } from '@/hooks/use-toast'; // Assuming hook exists, if not will use alert
 
 interface SecretCardProps {
     secret: any;
@@ -69,13 +68,51 @@ export default function SecretCard({ secret, onVote }: SecretCardProps) {
         }
     };
 
+    const [viewCount, setViewCount] = useState(secretData.views || 0);
+    const isIncinerator = category.id === 'incinerator';
+
+    // Config for Incinerator
+    const MAX_VIEWS = 100;
+    const MAX_REACTIONS = 1; // User requested: Vanish after 1 reaction
+
+    // Calculate total reactions
+    const totalReactions = Object.values(reactions).reduce((a, b) => a + b, 0);
+
+    // It burns if Views limit hit OR Reaction limit hit
+    const isBurned = isIncinerator && (viewCount >= MAX_VIEWS || totalReactions >= MAX_REACTIONS);
+
+    useEffect(() => {
+        if (isIncinerator && !isBurned) {
+            // Increment view count on mount (simulated "View")
+            // Check local storage to prevent double counting on same session/reload for UX
+            // BUT for the user test, they want it to burn on refresh, so we might skip the session check
+            // or keep it. Let's keep it to be "fair" but if they view it once, it's 1 view.
+
+            const viewedKey = `viewed-${secret.id}`;
+            if (sessionStorage.getItem(viewedKey)) return;
+
+            sessionStorage.setItem(viewedKey, 'true');
+
+            const incrementView = async () => {
+                const newViews = (secretData.views || 0) + 1;
+                setViewCount(newViews); // Optimistic
+
+                const updatedData = { ...secretData, views: newViews };
+                await supabase.from('secrets').update({
+                    content: JSON.stringify(updatedData)
+                }).eq('id', secret.id);
+            };
+            incrementView();
+        }
+    }, [isIncinerator, secret.id, isBurned, secretData]);
+
     const handleShare = async () => {
-        const shareText = `"${secretData.text}" - ${secretData.identity.name} \n\nRead more on The Void: ${window.location.origin}/wall`;
+        const shareText = `"${secretData.text}" - ${secretData.identity.name} \n\nRead more on The Global Secret Wall: ${window.location.origin}/wall`;
 
         if (navigator.share) {
             try {
                 await navigator.share({
-                    title: 'Secret from The Void',
+                    title: 'Secret from The Global Secret Wall',
                     text: shareText,
                     url: window.location.href,
                 });
@@ -94,16 +131,31 @@ export default function SecretCard({ secret, onVote }: SecretCardProps) {
         }
     };
 
+    if (isBurned) {
+        return null;
+    }
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className={cn(
                 "relative overflow-hidden rounded-2xl border bg-card/50 backdrop-blur-sm p-0 transition-all hover:shadow-lg",
-                category.borderColor
+                category.borderColor,
+                isIncinerator && "animate-fire border-red-500/50 shadow-red-900/20"
             )}
         >
             <div className={cn("absolute inset-0 opacity-[0.03] bg-gradient-to-br", category.gradient)} />
+
+            {/* Fire Effect Overlay for Incinerator */}
+            {isIncinerator && (
+                <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-red-600 via-orange-500 to-yellow-500 opacity-80">
+                    <div
+                        className="h-full bg-black/50 transition-all duration-1000"
+                        style={{ width: `${(viewCount / MAX_VIEWS) * 100}%` }}
+                    />
+                </div>
+            )}
 
             {/* Header */}
             <div className="flex items-center justify-between p-4 pb-2 border-b border-white/5 relative z-10">
@@ -123,6 +175,12 @@ export default function SecretCard({ secret, onVote }: SecretCardProps) {
                                 <div className="flex items-center gap-0.5 text-[10px] text-orange-500 font-mono bg-orange-500/10 px-1 rounded">
                                     <Clock className="w-2.5 h-2.5" />
                                     <span>Expiring</span>
+                                </div>
+                            )}
+                            {isIncinerator && (
+                                <div className="flex items-center gap-0.5 text-[10px] text-red-500 font-mono bg-red-500/10 px-1 rounded animate-pulse">
+                                    <span className="text-xs">🔥</span>
+                                    <span>{Math.max(0, MAX_VIEWS - viewCount)} views left</span>
                                 </div>
                             )}
                         </div>

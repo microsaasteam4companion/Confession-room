@@ -121,7 +121,7 @@ export default function CreateSecretModal({ onPostSuccess, trigger, defaultCateg
             <DialogContent className="sm:max-w-md bg-background/95 backdrop-blur-xl border-border">
                 <DialogHeader>
                     <DialogTitle className="text-center text-2xl font-black gradient-text">
-                        Whisper to the Void
+                        Whisper to the Wall
                     </DialogTitle>
                 </DialogHeader>
 

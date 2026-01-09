@@ -10,6 +10,7 @@ interface RouteGuardProps {
 const PUBLIC_ROUTES = [
   '/',
   '/wall',
+  '/club',
   '/login',
   '/403',
   '/404',

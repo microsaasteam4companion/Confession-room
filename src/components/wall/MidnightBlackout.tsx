@@ -9,8 +9,11 @@ export default function MidnightBlackout({ children }: { children: React.ReactNo
     useEffect(() => {
         const checkTime = () => {
             const now = new Date();
-            // FORCE CLOSED FOR TESTING
-            const open = false; // Always closed
+            // TEST MODE: 1 PM (13) to 4 PM (16)
+            const hours = now.getHours();
+            const START_HOUR = 13;
+            const END_HOUR = 16;
+            const open = hours >= START_HOUR && hours < END_HOUR;
             setIsOpen(open);
 
             if (!open) {

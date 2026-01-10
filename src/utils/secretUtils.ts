@@ -14,6 +14,14 @@ export interface SecretData {
     };
     expiresAt?: string; // ISO Date String
     views?: number;
+    replies?: {
+        text: string;
+        timestamp: string;
+        identity?: {
+            name: string;
+            avatar: string;
+        };
+    }[];
 }
 
 export function parseSecretContent(content: string): SecretData {
@@ -28,7 +36,8 @@ export function parseSecretContent(content: string): SecretData {
                     identity: parsed.identity || { avatar: '👻', name: 'Anonymous Ghost' },
                     reactions: parsed.reactions || { hug: 0, shock: 0, relatable: 0 },
                     expiresAt: parsed.expiresAt,
-                    views: parsed.views || 0
+                    views: parsed.views || 0,
+                    replies: parsed.replies || []
                 };
             }
         }
@@ -45,7 +54,8 @@ export function parseSecretContent(content: string): SecretData {
             name: 'Anonymous Guest'
         },
         reactions: { hug: 0, shock: 0, relatable: 0 },
-        views: 0
+        views: 0,
+        replies: []
     };
 }
 

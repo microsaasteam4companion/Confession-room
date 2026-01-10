@@ -27,7 +27,7 @@ const routes: RouteConfig[] = [
     element: <LandingPage />
   },
   {
-    name: 'Global Wall',
+    name: 'Community',
     path: '/wall',
     element: <PublicWallPage />
   },

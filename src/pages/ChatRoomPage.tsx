@@ -253,7 +253,7 @@ export default function ChatRoomPage() {
       console.error('Failed to post to wall:', err);
       toast({
         title: "Wall Error",
-        description: "Could not publish to the Global Wall.",
+        description: "Could not publish to the Community Wall.",
         variant: "destructive"
       });
     }
@@ -462,7 +462,7 @@ export default function ChatRoomPage() {
                                 "p-1 rounded-full transition-all duration-200 bg-white/10 hover:bg-white/20 active:scale-90",
                                 isOwnMessage ? "text-primary-foreground/70 hover:text-primary-foreground" : "text-muted-foreground/70 hover:text-primary"
                               )}
-                              title="Post to Global Wall"
+                              title="Post to Community Wall"
                             >
                               <Globe className="w-3.5 h-3.5" />
                             </button>

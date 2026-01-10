@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'motion/react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/db/supabase';
 import { cn } from '@/lib/utils';
@@ -11,7 +12,7 @@ import { parseSecretContent } from '@/utils/secretUtils';
 import { Card } from '@/components/ui/card';
 import { DUMMY_SECRETS } from '@/data/dummySecrets';
 
-import MidnightBlackout from '@/components/wall/MidnightBlackout';
+
 
 export default function PublicWallPage() {
     // ... existing hooks ...
@@ -100,7 +101,7 @@ export default function PublicWallPage() {
     });
 
     return (
-        <div className="min-h-screen bg-background text-foreground transition-colors duration-300 flex flex-col overflow-x-hidden">
+        <div className="h-screen bg-background text-foreground transition-colors duration-300 flex flex-col overflow-hidden">
             {/* Mobile-First Header */}
             <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-xl">
                 <div className="container max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
@@ -108,7 +109,7 @@ export default function PublicWallPage() {
                         <Button variant="ghost" size="icon" onClick={() => navigate('/')} className="rounded-full -ml-2">
                             <ArrowLeft className="w-5 h-5" />
                         </Button>
-                        <h1 className="font-black text-lg tracking-tight">The Global Secret Wall</h1>
+                        <h1 className="font-black text-lg tracking-tight">Community</h1>
                     </div>
 
                     <div className="flex items-center gap-2">
@@ -162,9 +163,9 @@ export default function PublicWallPage() {
                 </div>
             </header>
 
-            <div className="container max-w-7xl mx-auto px-4 py-6 flex-1 flex flex-col md:grid md:grid-cols-[240px_1fr] xl:grid-cols-[240px_1fr_320px] gap-8 items-start">
+            <div className="container max-w-7xl mx-auto px-4 py-6 flex-1 h-0 flex flex-col md:grid md:grid-cols-[280px_1fr] lg:grid-cols-[300px_1fr_300px] gap-8 items-start">
                 {/* Desktop Sidebar */}
-                <aside className="hidden md:block sticky top-24 space-y-6">
+                <aside className="hidden md:block space-y-6 w-full max-w-[300px]">
                     <div className="bg-card/30 backdrop-blur-sm border border-border/50 rounded-2xl p-4">
                         <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-4 px-2">Vibes</h3>
                         <div className="space-y-1">
@@ -212,7 +213,33 @@ export default function PublicWallPage() {
                 </aside>
 
                 {/* Main Feed */}
-                <main className="max-w-xl mx-auto w-full space-y-6">
+                <main className="w-full h-full overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-primary/10 scrollbar-track-transparent space-y-6">
+                    {/* Digital Incinerator Banner */}
+                    {activeFilter === 'incinerator' && (
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="bg-gradient-to-r from-red-600 via-orange-600 to-red-600 p-4 rounded-2xl shadow-lg shadow-red-900/40 text-white relative overflow-hidden group"
+                        >
+                            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20" />
+                            <div className="relative z-10 flex items-center gap-4">
+                                <div className="text-3xl animate-bounce">🔥</div>
+                                <div className="flex-1">
+                                    <h3 className="font-black italic uppercase tracking-tighter text-lg leading-tight">
+                                        Active Incineration Protocol
+                                    </h3>
+                                    <p className="text-xs font-bold text-red-100/90 leading-tight mt-0.5">
+                                        Everything here dissolves automatically <span className="underline decoration-yellow-400 decoration-2 underline-offset-2">after 1 hour</span>. Read fast, or lose it forever!
+                                    </p>
+                                </div>
+                                <div className="text-right hidden sm:block">
+                                    <div className="text-[10px] font-black uppercase tracking-widest text-red-200">System Status</div>
+                                    <div className="text-xs font-bold font-mono">BURNING...</div>
+                                </div>
+                            </div>
+                        </motion.div>
+                    )}
+
                     {/* Mobile Only: Midnight Club Entry */}
                     <div
                         onClick={() => navigate('/club')}
@@ -321,12 +348,12 @@ export default function PublicWallPage() {
                     )}
                 </main>
 
-                {/* Highlights Sidebar (Desktop XL+) */}
-                <aside className="hidden xl:block sticky top-24 space-y-6 w-80">
+                {/* Highlights Sidebar (Desktop LG+) */}
+                <aside className="hidden lg:block sticky top-0 space-y-6 w-[300px]">
                     <div className="bg-card/30 backdrop-blur-sm border border-border/50 rounded-2xl p-4">
                         <div className="flex items-center gap-2 mb-4 px-2">
                             <span className="text-lg">🏆</span>
-                            <h3 className="text-xs font-bold text-foreground uppercase tracking-widest">Wall Highlights</h3>
+                            <h3 className="text-xs font-bold text-foreground uppercase tracking-widest">Community Highlights</h3>
                         </div>
 
                         <div className="space-y-4">
@@ -394,7 +421,7 @@ export default function PublicWallPage() {
                                 </h3>
                                 <p className="text-[10px] text-purple-400 font-mono mt-1 flex items-center gap-1.5">
                                     <span className="w-1.5 h-1.5 rounded-full bg-purple-500 animate-pulse" />
-                                    Opens 12AM - 4AM
+                                    Opens 8:30 AM IST / 10 PM EST
                                 </p>
                             </div>
                             <div className="text-2xl opacity-50 group-hover:opacity-100 transition-opacity">

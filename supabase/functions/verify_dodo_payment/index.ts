@@ -22,12 +22,24 @@ Deno.serve(async (req) => {
         let payment_id: string | undefined;
 
         if (body.event_type && body.data?.payload) {
+            // Case 1: Dodo Payments Webhook
             const payload = body.data.payload;
             order_id = payload.metadata?.order_id;
             payment_id = payload.id;
-            console.log(`[VerifyDodo] Webhook: ${body.event_type}, Order: ${order_id}`);
+            console.log(`[VerifyDodo] Dodo Webhook: ${body.event_type}, Order: ${order_id}`);
             if (body.event_type !== "payment.succeeded") return new Response(JSON.stringify({ ok: true }));
+        } else if (body.record) {
+            // Case 2: Supabase Database Webhook (Anti-Tamper)
+            order_id = body.record.id;
+            payment_id = body.record.stripe_payment_intent_id || body.record.payment_id;
+            console.log(`[VerifyDodo] DB Webhook (Anti-Tamper): Order ${order_id}`);
+
+            // Only verify if status is potentially being tampered with or needs verification
+            if (body.record.status !== 'completed' && body.old_record?.status === 'completed') {
+                console.log(`[VerifyDodo] Potential Downgrade Tamper detected for Order ${order_id}`);
+            }
         } else {
+            // Case 3: Manual Trigger from Frontend
             order_id = body.order_id;
             payment_id = body.payment_id;
         }

@@ -9,21 +9,28 @@ export default function MidnightBlackout({ children }: { children: React.ReactNo
     useEffect(() => {
         const checkTime = () => {
             const now = new Date();
-            // TEST MODE: 1 PM (13) to 4 PM (16)
-            const hours = now.getHours();
-            const START_HOUR = 13;
-            const END_HOUR = 16;
-            const open = hours >= START_HOUR && hours < END_HOUR;
+            const utcHours = now.getUTCHours();
+            const utcMinutes = now.getUTCMinutes();
+
+            // 8:30 AM IST / 10:00 PM EST = 03:00 UTC
+            const START_UTC_HOUR = 3;
+            const START_UTC_MINUTE = 0;
+            const END_UTC_HOUR = 7;
+            const END_UTC_MINUTE = 0; // 4 hour window
+
+            const currentTotalMinutes = utcHours * 60 + utcMinutes;
+            const startTotalMinutes = START_UTC_HOUR * 60 + START_UTC_MINUTE;
+            const endTotalMinutes = END_UTC_HOUR * 60 + END_UTC_MINUTE;
+
+            const open = currentTotalMinutes >= startTotalMinutes && currentTotalMinutes < endTotalMinutes;
             setIsOpen(open);
 
             if (!open) {
-                // Target: 1:00 PM (13:00)
                 const target = new Date(now);
-                target.setHours(13, 0, 0, 0);
+                target.setUTCHours(START_UTC_HOUR, START_UTC_MINUTE, 0, 0);
 
-                // If now is past 1 PM, target is tomorrow 1 PM
-                if (now >= target) {
-                    target.setDate(target.getDate() + 1);
+                if (currentTotalMinutes >= startTotalMinutes) {
+                    target.setUTCDate(target.getUTCDate() + 1);
                 }
 
                 const diff = target.getTime() - now.getTime();
@@ -85,7 +92,7 @@ export default function MidnightBlackout({ children }: { children: React.ReactNo
                     </div>
 
                     <p className="text-sm text-center text-muted-foreground uppercase tracking-widest animate-pulse">
-                        Community opens at 1:00 PM.
+                        Club opens at 8:30 AM IST / 10:00 PM EST.
                     </p>
                 </div>
             </div>

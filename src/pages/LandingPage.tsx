@@ -357,7 +357,7 @@ export default function LandingPage() {
       answer: "We offer a 'First One Free' policy for new users to test the platform (7 minutes). For longer sessions or priority features, we offer affordable micro-plans."
     },
     {
-      question: "What is the Global Whisper Wall?",
+      question: "What is the Community Wall?",
       answer: "It's a collection of anonymous confessions shared by users from their private rooms. You can choose to 'Whisper to the Void' to feature your message there."
     }
   ];
@@ -402,7 +402,7 @@ export default function LandingPage() {
               <a href="#features" className="text-sm font-black uppercase hover:text-primary transition-colors">Features</a>
               <a href="#how-it-works" className="text-sm font-black uppercase hover:text-primary transition-colors">How It Works</a>
               <a href="#pricing" className="text-sm font-black uppercase hover:text-primary transition-colors">Pricing</a>
-              <button onClick={() => navigate('/wall')} className="text-sm font-black uppercase hover:text-primary transition-colors">Global Wall</button>
+              <button onClick={() => navigate('/wall')} className="text-sm font-black uppercase hover:text-primary transition-colors">Community</button>
               <a href="#join" className="text-sm font-black uppercase hover:text-primary transition-colors">Join Now</a>
             </nav>
 
@@ -646,7 +646,7 @@ export default function LandingPage() {
             onClick={() => navigate('/wall')}
             className="text-muted-foreground hover:text-primary transition-all font-bold text-lg group"
           >
-            View All Global Whispers
+            View All Community Whispers
             <ArrowRight className="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1" />
           </Button>
         </div>

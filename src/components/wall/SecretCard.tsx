@@ -69,25 +69,46 @@ export default function SecretCard({ secret, onVote }: SecretCardProps) {
     };
 
     const [viewCount, setViewCount] = useState(secretData.views || 0);
+    const [timeToBurn, setTimeToBurn] = useState<number>(100); // 100% to 0%
+    const [isDissolving, setIsDissolving] = useState(false);
+    const [isFullyBurned, setIsFullyBurned] = useState(false);
     const isIncinerator = category.id === 'incinerator';
 
     // Config for Incinerator
     const MAX_VIEWS = 100;
-    const MAX_REACTIONS = 1; // User requested: Vanish after 1 reaction
+    const MAX_REACTIONS = 10;
+    const BURN_TIME_LIMIT = 60 * 60 * 1000; // 1 hour for production (User requested)
 
     // Calculate total reactions
     const totalReactions = Object.values(reactions).reduce((a, b) => a + b, 0);
 
     // It burns if Views limit hit OR Reaction limit hit
-    const isBurned = isIncinerator && (viewCount >= MAX_VIEWS || totalReactions >= MAX_REACTIONS);
+    const isBurnedByStats = isIncinerator && (viewCount >= MAX_VIEWS || totalReactions >= MAX_REACTIONS);
 
     useEffect(() => {
-        if (isIncinerator && !isBurned) {
-            // Increment view count on mount (simulated "View")
-            // Check local storage to prevent double counting on same session/reload for UX
-            // BUT for the user test, they want it to burn on refresh, so we might skip the session check
-            // or keep it. Let's keep it to be "fair" but if they view it once, it's 1 view.
+        if (!isIncinerator || isBurnedByStats || isDissolving) return;
 
+        const checkTime = () => {
+            const createdAt = new Date(secret.created_at).getTime();
+            const now = new Date().getTime();
+            const elapsed = now - createdAt;
+            const remaining = Math.max(0, 1 - (elapsed / BURN_TIME_LIMIT));
+
+            setTimeToBurn(remaining * 100);
+
+            if (elapsed >= BURN_TIME_LIMIT && !isDissolving) {
+                setIsDissolving(true);
+            }
+        };
+
+        const timer = setInterval(checkTime, 1000);
+        checkTime(); // Initial check
+
+        return () => clearInterval(timer);
+    }, [isIncinerator, isBurnedByStats, secret.created_at, isDissolving]);
+
+    useEffect(() => {
+        if (isIncinerator && !isBurnedByStats && !isDissolving) {
             const viewedKey = `viewed-${secret.id}`;
             if (sessionStorage.getItem(viewedKey)) return;
 
@@ -104,15 +125,15 @@ export default function SecretCard({ secret, onVote }: SecretCardProps) {
             };
             incrementView();
         }
-    }, [isIncinerator, secret.id, isBurned, secretData]);
+    }, [isIncinerator, secret.id, isBurnedByStats, secretData, isDissolving]);
 
     const handleShare = async () => {
-        const shareText = `"${secretData.text}" - ${secretData.identity.name} \n\nRead more on The Global Secret Wall: ${window.location.origin}/wall`;
+        const shareText = `"${secretData.text}" - ${secretData.identity.name} \n\nRead more on Community: ${window.location.origin}/wall`;
 
         if (navigator.share) {
             try {
                 await navigator.share({
-                    title: 'Secret from The Global Secret Wall',
+                    title: 'Secret from Community',
                     text: shareText,
                     url: window.location.href,
                 });
@@ -131,28 +152,41 @@ export default function SecretCard({ secret, onVote }: SecretCardProps) {
         }
     };
 
-    if (isBurned) {
+    if (isBurnedByStats || isFullyBurned) {
         return null;
     }
 
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            animate={isDissolving ? {
+                opacity: 0,
+                scale: 0.8,
+                filter: "blur(10px) brightness(2) contrast(2)",
+                rotate: 2,
+                y: -100,
+                transition: { duration: 1.5, ease: "easeIn" }
+            } : { opacity: 1, y: 0 }}
+            onAnimationComplete={() => {
+                if (isDissolving) setIsFullyBurned(true);
+            }}
             className={cn(
                 "relative overflow-hidden rounded-2xl border bg-card/50 backdrop-blur-sm p-0 transition-all hover:shadow-lg",
                 category.borderColor,
-                isIncinerator && "animate-fire border-red-500/50 shadow-red-900/20"
+                isIncinerator && "animate-fire border-red-500/50 shadow-red-900/20",
+                isDissolving && "pointer-events-none"
             )}
         >
             <div className={cn("absolute inset-0 opacity-[0.03] bg-gradient-to-br", category.gradient)} />
 
             {/* Fire Effect Overlay for Incinerator */}
             {isIncinerator && (
-                <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-red-600 via-orange-500 to-yellow-500 opacity-80">
-                    <div
-                        className="h-full bg-black/50 transition-all duration-1000"
-                        style={{ width: `${(viewCount / MAX_VIEWS) * 100}%` }}
+                <div className="absolute inset-x-0 bottom-0 h-1.5 bg-background/20 overflow-hidden">
+                    <motion.div
+                        className="h-full bg-gradient-to-r from-red-600 via-orange-500 to-yellow-500 shadow-[0_0_10px_rgba(255,69,0,0.8)]"
+                        initial={{ width: "100%" }}
+                        animate={{ width: `${timeToBurn}%` }}
+                        transition={{ duration: 1, ease: "linear" }}
                     />
                 </div>
             )}
@@ -178,9 +212,13 @@ export default function SecretCard({ secret, onVote }: SecretCardProps) {
                                 </div>
                             )}
                             {isIncinerator && (
-                                <div className="flex items-center gap-0.5 text-[10px] text-red-500 font-mono bg-red-500/10 px-1 rounded animate-pulse">
+                                <div className="flex items-center gap-1.5 text-[10px] text-red-500 font-mono bg-red-500/10 px-2 py-0.5 rounded animate-pulse border border-red-500/20 shadow-[0_0_10px_rgba(239,68,68,0.2)]">
                                     <span className="text-xs">🔥</span>
-                                    <span>{Math.max(0, MAX_VIEWS - viewCount)} views left</span>
+                                    <span className="font-black uppercase tracking-tighter">
+                                        Dissolving in {Math.ceil((timeToBurn / 100) * (BURN_TIME_LIMIT / 1000)) > 60
+                                            ? `${Math.ceil((timeToBurn / 100) * (BURN_TIME_LIMIT / 60000))}m`
+                                            : `${Math.ceil((timeToBurn / 100) * (BURN_TIME_LIMIT / 1000))}s`}
+                                    </span>
                                 </div>
                             )}
                         </div>

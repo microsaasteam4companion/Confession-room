@@ -136,7 +136,7 @@ export default function CreateRoomPage() {
               <Label htmlFor="roomName">Room Name</Label>
               <Input
                 id="roomName"
-                placeholder="e.g. Late Night Talks"
+                placeholder="e.g. office rant, gossips, 3 am talks"
                 value={roomName}
                 onChange={(e) => setRoomName(e.target.value)}
                 required

@@ -100,7 +100,7 @@ export default function PublicWallPage() {
     });
 
     return (
-        <div className="min-h-screen bg-background text-foreground transition-colors duration-300 flex flex-col">
+        <div className="min-h-screen bg-background text-foreground transition-colors duration-300 flex flex-col overflow-x-hidden">
             {/* Mobile-First Header */}
             <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-xl">
                 <div className="container max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
@@ -162,7 +162,7 @@ export default function PublicWallPage() {
                 </div>
             </header>
 
-            <div className="container max-w-7xl mx-auto px-4 py-6 flex-1 grid md:grid-cols-[240px_1fr] xl:grid-cols-[240px_1fr_320px] gap-8 items-start">
+            <div className="container max-w-7xl mx-auto px-4 py-6 flex-1 flex flex-col md:grid md:grid-cols-[240px_1fr] xl:grid-cols-[240px_1fr_320px] gap-8 items-start">
                 {/* Desktop Sidebar */}
                 <aside className="hidden md:block sticky top-24 space-y-6">
                     <div className="bg-card/30 backdrop-blur-sm border border-border/50 rounded-2xl p-4">

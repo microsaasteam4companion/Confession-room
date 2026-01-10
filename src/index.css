@@ -112,6 +112,14 @@ Cyberpunk-Minimalist Theme with Dark Mode Default
 }
 
 @layer utilities {
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
   /* Enhanced Glass-morphic card effect */
   .glass-card {
     background: hsl(var(--glass-bg));

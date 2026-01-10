@@ -213,6 +213,71 @@ export default function PublicWallPage() {
 
                 {/* Main Feed */}
                 <main className="max-w-xl mx-auto w-full space-y-6">
+                    {/* Mobile Only: Midnight Club Entry */}
+                    <div
+                        onClick={() => navigate('/club')}
+                        className="md:hidden cursor-pointer group relative overflow-hidden rounded-2xl border border-purple-500/30 bg-black p-5 shadow-lg shadow-purple-900/10 active:scale-[0.98] transition-all"
+                    >
+                        <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-black to-black opacity-50" />
+                        <div className="absolute inset-0 opacity-[0.1] bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+
+                        <div className="relative z-10 flex items-center justify-between">
+                            <div>
+                                <h3 className="text-lg font-black text-white italic tracking-tighter uppercase">
+                                    The Midnight Club
+                                </h3>
+                                <p className="text-[10px] text-purple-400 font-mono mt-1 flex items-center gap-1.5">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-purple-500 animate-pulse" />
+                                    Opens 12AM - 4AM
+                                </p>
+                            </div>
+                            <div className="text-2xl animate-pulse">🌙</div>
+                        </div>
+                    </div>
+
+                    {/* Mobile Only: Highlights (Horizontal Scroll) */}
+                    <div className="md:hidden space-y-2">
+                        <div className="flex items-center gap-2 px-1">
+                            <span className="text-sm">🏆</span>
+                            <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Today's Highlights</h3>
+                        </div>
+                        <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide -mx-4 px-4 snap-x">
+                            {CATEGORIES.filter(c => c.id !== 'all').map(cat => {
+                                const topSecret = secrets
+                                    .filter(s => {
+                                        const d = parseSecretContent(s.content);
+                                        return d.categoryId === cat.id;
+                                    })
+                                    .sort((a, b) => (b.votes || 0) - (a.votes || 0))[0];
+
+                                if (!topSecret) return null;
+                                const content = parseSecretContent(topSecret.content);
+
+                                return (
+                                    <div
+                                        key={cat.id}
+                                        onClick={() => setActiveFilter(cat.id)}
+                                        className={cn(
+                                            "min-w-[280px] snap-center p-4 rounded-xl border bg-card/50 backdrop-blur-sm transition-all active:scale-[0.98]",
+                                            cat.borderColor
+                                        )}
+                                    >
+                                        <div className="flex items-center justify-between mb-2">
+                                            <div className={cn("text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5", cat.color)}>
+                                                <cat.icon className="w-3 h-3" />
+                                                {cat.label}
+                                            </div>
+                                            <div className="text-[9px] font-mono font-bold text-muted-foreground bg-muted/50 px-1.5 py-0.5 rounded">
+                                                {topSecret.votes} votes
+                                            </div>
+                                        </div>
+                                        <p className="text-xs line-clamp-2 text-foreground/90 font-medium leading-relaxed">"{content.text}"</p>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+
                     {loading ? (
                         <div className="flex flex-col items-center justify-center py-20 gap-4">
                             <Loader2 className="w-10 h-10 text-primary animate-spin" />

@@ -213,7 +213,7 @@ export default function PublicWallPage() {
                 </aside>
 
                 {/* Main Feed */}
-                <main className="w-full h-full overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-primary/10 scrollbar-track-transparent space-y-6">
+                <main className="w-full h-full overflow-y-auto pr-2 dark:scrollbar-thumb-black scrollbar-thumb-white space-y-6">
                     {/* Digital Incinerator Banner */}
                     {activeFilter === 'incinerator' && (
                         <motion.div

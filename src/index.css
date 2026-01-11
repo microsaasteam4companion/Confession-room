@@ -120,6 +120,35 @@ Cyberpunk-Minimalist Theme with Dark Mode Default
     scrollbar-width: none; /* Firefox */
   }
 
+  /* Custom scrollbar colors for community wall */
+  .scrollbar-thumb-black::-webkit-scrollbar {
+    width: 6px;
+  }
+  .scrollbar-thumb-black::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-thumb-black::-webkit-scrollbar-thumb {
+    background: hsl(0 0% 0%);
+    border-radius: 3px;
+  }
+  .scrollbar-thumb-black::-webkit-scrollbar-thumb:hover {
+    background: hsl(0 0% 10%);
+  }
+
+  .scrollbar-thumb-white::-webkit-scrollbar {
+    width: 6px;
+  }
+  .scrollbar-thumb-white::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-thumb-white::-webkit-scrollbar-thumb {
+    background: hsl(0 0% 100%);
+    border-radius: 3px;
+  }
+  .scrollbar-thumb-white::-webkit-scrollbar-thumb:hover {
+    background: hsl(0 0% 90%);
+  }
+
   /* Enhanced Glass-morphic card effect */
   .glass-card {
     background: hsl(var(--glass-bg));

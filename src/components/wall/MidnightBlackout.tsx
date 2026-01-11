@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Loader2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Loader2, ArrowLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export default function MidnightBlackout({ children }: { children: React.ReactNode }) {
+    const navigate = useNavigate();
     const [timeLeft, setTimeLeft] = useState<{ hours: number, minutes: number, seconds: number } | null>(null);
     const [isOpen, setIsOpen] = useState(false);
     const [loading, setLoading] = useState(true);
@@ -60,6 +63,18 @@ export default function MidnightBlackout({ children }: { children: React.ReactNo
                 {/* Background Noise/Grid */}
                 <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-900/20 via-black to-black" />
                 <div className="absolute inset-0 opacity-[0.03] bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+
+                {/* Back Button */}
+                <div className="absolute top-4 left-4 z-20">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => navigate('/wall')}
+                        className="rounded-full text-zinc-400 hover:text-white hover:bg-white/10 transition-colors"
+                    >
+                        <ArrowLeft className="w-5 h-5" />
+                    </Button>
+                </div>
 
                 <div className="relative z-10 text-center space-y-8 max-w-2xl">
                     <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-white/50">

@@ -137,7 +137,7 @@ export default function PublicWallPage() {
                                 className={cn(
                                     "whitespace-nowrap px-4 py-1.5 rounded-full text-xs font-bold transition-all border",
                                     activeFilter === 'all'
-                                        ? "bg-foreground text-background border-foreground text-foreground"
+                                        ? "bg-primary text-primary-foreground border-primary"
                                         : "bg-background/50 text-muted-foreground border-transparent"
                                 )}
                             >
@@ -174,7 +174,7 @@ export default function PublicWallPage() {
                                 className={cn(
                                     "w-full text-left px-4 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-3",
                                     activeFilter === 'all'
-                                        ? "bg-foreground text-background shadow-lg"
+                                        ? "bg-primary text-primary-foreground shadow-lg"
                                         : "hover:bg-muted/50 text-muted-foreground hover:text-foreground"
                                 )}
                             >
@@ -243,9 +243,9 @@ export default function PublicWallPage() {
                     {/* Mobile Only: Midnight Club Entry */}
                     <div
                         onClick={() => navigate('/club')}
-                        className="md:hidden cursor-pointer group relative overflow-hidden rounded-2xl border border-purple-500/30 bg-black p-5 shadow-lg shadow-purple-900/10 active:scale-[0.98] transition-all"
+                        className="md:hidden cursor-pointer group relative overflow-hidden rounded-2xl border border-pink-500/30 dark:bg-black bg-gradient-to-br from-pink-600 to-purple-700 p-5 shadow-lg shadow-pink-900/10 active:scale-[0.98] transition-all"
                     >
-                        <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-black to-black opacity-50" />
+                        <div className="absolute inset-0 bg-gradient-to-br from-pink-500/20 dark:via-black dark:to-black via-pink-600/50 to-purple-700/50 opacity-50" />
                         <div className="absolute inset-0 opacity-[0.1] bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
 
                         <div className="relative z-10 flex items-center justify-between">
@@ -253,8 +253,8 @@ export default function PublicWallPage() {
                                 <h3 className="text-lg font-black text-white italic tracking-tighter uppercase">
                                     The Midnight Club
                                 </h3>
-                                <p className="text-[10px] text-purple-400 font-mono mt-1 flex items-center gap-1.5">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-purple-500 animate-pulse" />
+                                <p className="text-[10px] text-pink-200 dark:text-purple-400 font-mono mt-1 flex items-center gap-1.5">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-pink-400 dark:bg-purple-500 animate-pulse" />
                                     Opens 12AM - 4AM
                                 </p>
                             </div>
@@ -409,9 +409,9 @@ export default function PublicWallPage() {
                     {/* The Midnight Club - Entry Point */}
                     <div
                         onClick={() => navigate('/club')}
-                        className="cursor-pointer group relative overflow-hidden rounded-2xl border border-purple-500/30 bg-black p-5 shadow-lg shadow-purple-900/10 hover:shadow-purple-900/30 transition-all hover:scale-[1.02]"
+                        className="cursor-pointer group relative overflow-hidden rounded-2xl border border-pink-500/30 dark:bg-black bg-gradient-to-br from-pink-600 to-purple-700 p-5 shadow-lg shadow-pink-900/10 hover:shadow-pink-900/30 transition-all hover:scale-[1.02]"
                     >
-                        <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-black to-black opacity-50" />
+                        <div className="absolute inset-0 bg-gradient-to-br from-pink-500/20 dark:via-black dark:to-black via-pink-600/50 to-purple-700/50 opacity-50" />
                         <div className="absolute inset-0 opacity-[0.1] bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
 
                         <div className="relative z-10 flex items-center justify-between">
@@ -419,8 +419,8 @@ export default function PublicWallPage() {
                                 <h3 className="text-lg font-black text-white italic tracking-tighter uppercase">
                                     The Midnight Club
                                 </h3>
-                                <p className="text-[10px] text-purple-400 font-mono mt-1 flex items-center gap-1.5">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-purple-500 animate-pulse" />
+                                <p className="text-[10px] text-pink-200 dark:text-purple-400 font-mono mt-1 flex items-center gap-1.5">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-pink-400 dark:bg-purple-500 animate-pulse" />
                                     Opens 8:30 AM IST / 10 PM EST
                                 </p>
                             </div>

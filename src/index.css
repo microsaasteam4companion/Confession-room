@@ -149,6 +149,45 @@ Cyberpunk-Minimalist Theme with Dark Mode Default
     background: hsl(0 0% 90%);
   }
 
+  /* Mobile-specific utilities */
+  /* Safe area support for notched devices (iPhone X+) */
+  .safe-area-pb {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .safe-area-pt {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .safe-area-pl {
+    padding-left: env(safe-area-inset-left);
+  }
+
+  .safe-area-pr {
+    padding-right: env(safe-area-inset-right);
+  }
+
+  /* Touch-friendly minimum sizes (44x44px recommended by Apple/Google) */
+  .touch-target {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* Prevent text selection on touch devices for UI elements */
+  .no-select {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Smooth scrolling for mobile */
+  .smooth-scroll {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+
   /* Enhanced Glass-morphic card effect */
   .glass-card {
     background: hsl(var(--glass-bg));

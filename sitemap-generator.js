@@ -14,6 +14,9 @@ const SITEMAP_PATH = path.join(PUBLIC_DIR, 'sitemap.xml');
 const routes = [
     { path: '', priority: '1.0', changefreq: 'daily' },
     { path: 'wall', priority: '0.8', changefreq: 'daily' },
+    { path: 'club', priority: '0.7', changefreq: 'weekly' },
+    { path: 'privacy', priority: '0.5', changefreq: 'monthly' },
+    { path: 'terms', priority: '0.5', changefreq: 'monthly' },
 ];
 
 function generateSitemap() {
@@ -24,7 +27,7 @@ function generateSitemap() {
 ${routes
             .map(
                 (route) => `  <url>
-    <loc>${SITE_URL}/${route.path}</loc>
+    <loc>${SITE_URL}${route.path ? '/' + route.path : '/'}</loc>
     <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
     <changefreq>${route.changefreq}</changefreq>
     <priority>${route.priority}</priority>

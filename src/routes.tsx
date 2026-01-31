@@ -11,6 +11,7 @@ import MidnightClubPage from './pages/MidnightClubPage';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
 import NotFound from './pages/NotFound';
+import BlogPage from './pages/BlogPage';
 import type { ReactNode } from 'react';
 
 interface RouteConfig {
@@ -25,6 +26,11 @@ const routes: RouteConfig[] = [
     name: 'Landing',
     path: '/',
     element: <LandingPage />
+  },
+  {
+    name: 'Blog',
+    path: '/blog',
+    element: <BlogPage />
   },
   {
     name: 'Community',

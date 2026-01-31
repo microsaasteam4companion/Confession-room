@@ -8,7 +8,6 @@ import { Separator } from '@/components/ui/separator';
 // In motion v12, React components are imported from 'motion/react'
 import { motion } from 'motion/react';
 import {
-  Sparkles,
   UserCircle,
   Shield,
   Clock,
@@ -27,8 +26,7 @@ import {
   PlusCircle,
   MinusCircle,
   Terminal,
-  Mail,
-  UsersRound
+  Mail
 } from 'lucide-react';
 
 // Custom Social Media Icon Components
@@ -442,7 +440,7 @@ export default function LandingPage() {
               <a href="#how-it-works" className="text-sm font-black uppercase hover:text-primary transition-colors">How It Works</a>
               <a href="#pricing" className="text-sm font-black uppercase hover:text-primary transition-colors">Pricing</a>
               <button onClick={() => navigate('/wall')} className="text-sm font-black uppercase hover:text-primary transition-colors">Community</button>
-              <a href="#join" className="text-sm font-black uppercase hover:text-primary transition-colors">Join Now</a>
+              <button onClick={() => navigate('/blog')} className="text-sm font-black uppercase hover:text-primary transition-colors">Blog</button>
             </nav>
 
             <div className="flex items-center gap-2 md:gap-4">

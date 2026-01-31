@@ -17,14 +17,14 @@ import { DUMMY_SECRETS } from '@/data/dummySecrets';
 export default function PublicWallPage() {
     // ... existing hooks ...
     const navigate = useNavigate();
-    const [darkMode, setDarkMode] = useState(true);
+    const [darkMode, setDarkMode] = useState(false);
     const [secrets, setSecrets] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [votedIds, setVotedIds] = useState<string[]>([]);
     const [activeFilter, setActiveFilter] = useState('all');
 
     useEffect(() => {
-        const isDark = localStorage.getItem('darkMode') !== 'false';
+        const isDark = localStorage.getItem('darkMode') === 'true';
         setDarkMode(isDark);
         if (isDark) document.documentElement.classList.add('dark');
         else document.documentElement.classList.remove('dark');

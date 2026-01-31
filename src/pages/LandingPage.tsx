@@ -70,7 +70,7 @@ interface Secret {
 
 export default function LandingPage() {
   const [roomCode, setRoomCode] = useState('');
-  const [darkMode, setDarkMode] = useState(true);
+  const [darkMode, setDarkMode] = useState(false);
   const [loadingPayment, setLoadingPayment] = useState<string | null>(null);
   const navigate = useNavigate();
 
@@ -80,7 +80,7 @@ export default function LandingPage() {
 
   // Initialize dark mode and load upvotes on mount
   useEffect(() => {
-    const isDark = localStorage.getItem('darkMode') !== 'false';
+    const isDark = localStorage.getItem('darkMode') === 'true';
     setDarkMode(isDark);
     if (isDark) {
       document.documentElement.classList.add('dark');

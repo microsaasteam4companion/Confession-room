@@ -113,14 +113,26 @@ export default function LandingPage() {
       if (error) throw error;
 
       if (data && data.length > 0) {
-        setLocalSecrets((data as any[]).map(s => ({
-          id: s.id,
-          text: s.content,
-          ghostId: s.ghost_id,
-          votes: s.votes,
-          avatar: s.avatar,
-          voted: activeVotedIds.includes(s.id)
-        })));
+        setLocalSecrets((data as any[]).map(s => {
+          // Some records store content as a JSON string (e.g. from wall format)
+          let text = s.content;
+          if (typeof text === 'string' && text.trim().startsWith('{')) {
+            try {
+              const parsed = JSON.parse(text);
+              text = parsed.text || text;
+            } catch {
+              // Not valid JSON, use as-is
+            }
+          }
+          return {
+            id: s.id,
+            text,
+            ghostId: s.ghost_id,
+            votes: s.votes,
+            avatar: s.avatar,
+            voted: activeVotedIds.includes(s.id)
+          };
+        }));
       } else {
         seedSecrets();
       }
@@ -431,16 +443,15 @@ export default function LandingPage() {
               <div className="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-primary/20 flex items-center justify-center border border-primary/20 group">
                 <span className="text-sm md:text-xl group-hover:scale-110 transition-transform">🤫</span>
               </div>
-              <span className="text-lg md:text-xl font-black tracking-tighter text-foreground dark:text-white">SECRETROOM</span>
+              <span className="text-lg md:text-xl font-black tracking-tighter text-foreground dark:text-white">SecretRoom</span>
             </div>
 
             {/* Desktop Nav - Hidden on Mobile */}
             <nav className="hidden xl:flex items-center gap-8 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-              <a href="#features" className="text-sm font-black uppercase hover:text-primary transition-colors">Features</a>
-              <a href="#how-it-works" className="text-sm font-black uppercase hover:text-primary transition-colors">How It Works</a>
-              <a href="#pricing" className="text-sm font-black uppercase hover:text-primary transition-colors">Pricing</a>
-              <button onClick={() => navigate('/wall')} className="text-sm font-black uppercase hover:text-primary transition-colors">Community</button>
-              <button onClick={() => navigate('/blog')} className="text-sm font-black uppercase hover:text-primary transition-colors">Blog</button>
+              <a href="#features" className="text-sm font-black hover:text-primary transition-colors">Features</a>
+              <a href="#how-it-works" className="text-sm font-black hover:text-primary transition-colors">How it works</a>
+              <a href="#pricing" className="text-sm font-black hover:text-primary transition-colors">Pricing</a>
+              <button onClick={() => navigate('/wall')} className="text-sm font-black hover:text-primary transition-colors">Community</button>
             </nav>
 
             <div className="flex items-center gap-2 md:gap-4">
@@ -459,7 +470,7 @@ export default function LandingPage() {
                 className="rounded-full font-black px-4 md:px-8 h-9 md:h-11 text-xs md:text-sm shadow-lg shadow-primary/20"
                 onClick={() => navigate('/admin')}
               >
-                MY ROOMS
+                My rooms
               </Button>
             </div>
           </div>
@@ -469,17 +480,6 @@ export default function LandingPage() {
       {/* Hero Section - Redesigned for Massive Impact */}
       <section className="relative min-h-[90vh] flex flex-col items-center justify-center pt-24 md:pt-40 pb-16 px-4 grid-bg overflow-hidden">
         <div className="container mx-auto max-w-7xl relative z-10 text-center">
-          {/* Top Badge */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 md:px-6 md:py-2 rounded-full border border-pink-500/20 bg-pink-500/5 mb-8 md:mb-12"
-          >
-            <span className="text-[10px] md:text-xs font-black tracking-[0.2em] text-pink-500 uppercase flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-pink-500 animate-pulse" />
-              🛰️ Free Anonymous Chat Platform: No Signups, No Email, No Trace
-            </span>
-          </motion.div>
 
           {/* Main Headline */}
           <motion.div
@@ -488,10 +488,10 @@ export default function LandingPage() {
             transition={{ delay: 0.1, duration: 0.8 }}
             className="space-y-2 md:space-y-0 mb-8 md:mb-12"
           >
-            <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter text-slate-900 dark:text-white leading-[0.9] uppercase">
+            <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter text-slate-900 dark:text-white leading-[0.9]">
               Free Anonymous
             </h1>
-            <h2 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.9] uppercase cycling-gradient italic">
+            <h2 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.9] cycling-gradient italic">
               Chat Platform.
             </h2>
           </motion.div>
@@ -518,7 +518,7 @@ export default function LandingPage() {
               onClick={() => document.getElementById('join')?.scrollIntoView({ behavior: 'smooth' })}
               className="w-full sm:w-auto h-14 md:h-16 px-8 md:px-12 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-base md:text-lg hover:scale-105 transition-transform shadow-2xl"
             >
-              JOIN A ROOM NOW
+              Join a room now
             </Button>
             <Button
               variant="outline"
@@ -526,7 +526,7 @@ export default function LandingPage() {
               onClick={() => navigate('/admin/create-room')}
               className="w-full sm:w-auto h-14 md:h-16 px-8 md:px-12 rounded-2xl border-2 border-slate-200 dark:border-white/10 font-bold text-base md:text-lg hover:bg-slate-50 dark:hover:bg-white/5 transition-all"
             >
-              CREATE A ROOM
+              Create a room
             </Button>
           </motion.div>
 
@@ -744,7 +744,7 @@ export default function LandingPage() {
         <div className="container mx-auto px-4">
           <div className="text-center space-y-6 mb-24">
             <h3 className="text-5xl md:text-7xl wide-headline text-foreground">
-              UPGRADE THE VOID
+              Upgrade the void
             </h3>
             <p className="text-primary font-black tracking-[0.2em] uppercase text-sm">
               Pay only for the existence you need
@@ -866,7 +866,7 @@ export default function LandingPage() {
           <div className="text-center space-y-4 mb-20">
             <Badge variant="outline" className="px-6 py-1 bg-primary/5 border-primary/20 text-primary font-bold uppercase tracking-wider">Common Questions</Badge>
             <h2 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white tracking-tight">
-              Everything You Need to <span className="text-primary italic">Know</span>
+              Everything you need to <span className="text-primary italic">know</span>
             </h2>
           </div>
 
@@ -905,12 +905,7 @@ export default function LandingPage() {
             ))}
           </div>
 
-          <div className="mt-16 text-center">
-            <p className="text-muted-foreground font-medium mb-4 italic">Still have a burning question?</p>
-            <p className="text-primary/80 font-medium text-sm">
-              Contact on <a href="mailto:business@entrext.in" className="text-primary underline font-bold">business@entrext.in</a> for any queries or support
-            </p>
-          </div>
+
         </div>
       </section>
 

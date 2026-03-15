@@ -51,6 +51,7 @@ import PageMeta from '@/components/common/PageMeta';
 import { supabase } from '@/db/supabase';
 import { roomApi } from '@/db/api';
 import { cn } from '@/lib/utils';
+import UpvoteWidget from '@/components/common/UpvoteWidget';
 
 // Helper for default room params
 const DEFAULT_ROOM_PARAMS = {
@@ -999,6 +1000,7 @@ export default function LandingPage() {
           </p>
         </div>
       </footer>
+      <UpvoteWidget />
     </div>
   );
 }
